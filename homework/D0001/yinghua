@@ -18,4 +18,8 @@ Reduce : Partition the intermediate key space into R pieces.
 3.2 Master data structures :
 Each map and reduce task has status as "idle, in-progress or completed".
 3.3 Fault tolerance : 
-Master check heartbeat in each worker periodically. No heartbeat worker will be marked as failed. 
+Master check heartbeat in each worker periodically. No heartbeat worker will be marked as failed. Completed tasks will be reset back to idle and eligible for scheduling on other works again.
+Master Failure : Use checkpoint. New copy will be started.
+3.4 Locality
+Conserve network bandwidth by storing input data in local disks.
+
