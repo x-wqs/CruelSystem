@@ -11,15 +11,17 @@
   - reverse web link graph
   - term vector per host, 主机术语向量？
   - distributed sort
-- Example: Count Word Frequency
-  Map<String, Integer> merge(String docName, String content) {
-    for word in content {
-      ans.add(word, ans.getOrDefault(word) + 1)
-    }
-  }
-  Map<String, Integer> reduce(String word, List<Integer> counts) {
-    return sum(counts);
-  }
+- Example: Count Word Frequency  
+  ```java
+  Map<String, Integer> merge(String docName, String content) {  
+    for word in content {  
+      ans.add(word, ans.getOrDefault(word) + 1)  
+    }  
+  }  
+  Map<String, Integer> reduce(String word, List<Integer> counts) {  
+    return sum(counts);  
+  }  
+  ```
 
 ## Workflow
   - master: total / 64MB blocks = splits
