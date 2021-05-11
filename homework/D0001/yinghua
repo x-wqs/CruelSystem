@@ -2,7 +2,7 @@
 MapReduce
 1. Introduction : 
 Problem : a. Large scale data and computation need to be distributed
-          b. How to parallelize computation, distribute data and handle faliure.
+          b. How to parallelize computation, distribute data and handle failure.
 Propose : A new abstraction inspired by map/reduce in Lisp like functional languages. Hope to simplify large and parallel computations and use re-execution for fault tolerance.
 
 2. Programming model : 
@@ -11,7 +11,7 @@ Map  input : pair; output : intermediate key/value pairs
 Reduce  input : output of Map; output : smaller set of values. Zero or one output value per reduce invocation.
 
 3. Implementation :
-Many interfaces available. In Google, a large clusters of commodity PCs connected together with switched Etherenet.
+Many interfaces available. In Google, a large clusters of commodity PCs connected together with switched Ethernet.
 3.1 Execution overview : 
 Map : partition input data into a set of M splits, this can be processed in parallel by multiple machines.
 Reduce : Partition the intermediate key space into R pieces. 
@@ -19,6 +19,8 @@ Reduce : Partition the intermediate key space into R pieces.
 Each map and reduce task has status as "idle, in-progress or completed".
 3.3 Fault tolerance : 
 Master check heartbeat in each worker periodically. No heartbeat worker will be marked as failed. Completed tasks will be reset back to idle and eligible for scheduling on other works again.
+On failure, completed map tasks will need re-execution, while completed reduce tasks do not need. 
+MapReduce is to resilient to large-scale worker failure.
 Master Failure : Use checkpoint. New copy will be started.
 3.4 Locality
 Conserve network bandwidth by storing input data in local disks.
