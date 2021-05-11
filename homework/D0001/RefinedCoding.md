@@ -70,9 +70,9 @@ tailored,量身定制
 refinements,细化  
 invocation,调用  
 emit,发射  
-drawnfrom,取自  
+drawn from,取自  
 term vector ,术语向量  
-partitioning facilities,隔断设施  
+partitioning facilities,分区设施  
 considerably,相当  
 bisection,二等分  
 unreliable,不可靠  
@@ -83,21 +83,21 @@ tolerate machine failures,容忍机器故障
 inaccessible,无法进入  
 eventually,最终  
 checkpoints,检查点  
-Semantics,语义学  
+semantics,语义学  
 deterministic,确定性的  
 sequential,顺序的  
-rely on ,依靠  
+rely on,依靠  
 atomic commits,原子提交  
 underlying,潜在的  
 vast majority,绝大多数  
 relatively,相对地  
-Locality,地区性  
+locality,地区性  
 particular,特定  
 weaker semantics,较弱的语义  
 conserve,养护  
 replica,复制品  
 significant fraction,很大一部分  
-Task Granularity,任务粒度  
+task granularity,任务粒度  
 phase,阶段  
   
 ## Notes  
