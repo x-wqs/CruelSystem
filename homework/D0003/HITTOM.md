@@ -8,20 +8,13 @@ Analysis of Appendix A:
 #include "mapreduce/mapreduce.h"
 
 // mapper class
-
 class MyMapper : public Mapper {
-
  public:
- 
   virtual void Map(const MapInput& input) {
-  
     auto key = Deal(input);
-	  
     Emit(key, 1);
-		
   }
 }
-
 REGISTER_MAPPER(MyMapper)
 
 // reducer class
