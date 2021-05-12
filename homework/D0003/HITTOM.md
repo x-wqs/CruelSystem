@@ -1,5 +1,7 @@
 6: Large Scaling system uses MapReduce for its high performance, strong fault telorance, simple interface, and time of one version iteration decreases from months to days.
+
 8: MapReduce has been successfully used in Google for many purpose, for three reasons: easy to use, a large amounts of problems easily attributed to this model, scaling large clusters composed of thousands of machines.
+
 In practice, network bandwidth is scarce, so numbers of optimization about reducing data sent cross network is needed, which we can see in locality optimization.
 And little redundant execution can speed up the whole process apparently, such as backup tasks, which tackles the straggler problem caused by slow machines.
 
