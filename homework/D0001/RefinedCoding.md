@@ -31,20 +31,19 @@
   
 ## Questions
 1. In 2.1, reduce函数里面String key参数做什么用的？
-2. In 3.1.4, The locations of these buffered pairs on
-the local disk are passed back to the master, who
-is responsible for forwarding these locations to the
-reduce workers. Can master and reducer read the location on the local disk of mapper?
-3. In 3.1.5, The sorting is needed because typically
-many different keys map to the same reduce task. If
-the amount of intermediate data is too large to fit in
-memory, an external sort is used. Does only one reducer or all of reducers sort intermediate data? Give an example or try in lab.
-4. In 3.1, The sorting is needed because typically
-many different keys map to the same reduce task. If
-the amount of intermediate data is too large to fit in
-memory, an external sort is used. How to show total frequency for one word?
-5. In 3.3, Completed map tasks are re-executed on a failure because their output is stored on the local disk(s) of the
-failed machine and is therefore inaccessible. How does reducer read the intermediate data from the local disk on mapper?
+2. In 3.1.4, The locations of these buffered pairs on the local disk are passed back to the master,   
+who is responsible for forwarding these locations to the reduce workers.   
+Can master and reducer read the location on the local disk of mapper?
+3. In 3.1.5, The sorting is needed because typically many different keys map to the same reduce task.   
+If the amount of intermediate data is too large to fit in memory,   
+an external sort is used. Does only one reducer or all of reducers sort intermediate data?   
+Give an example or try in lab.
+4. In 3.1, The sorting is needed because typically many different keys map to the same reduce task.  
+If the amount of intermediate data is too large to fit in memory, an external sort is used.   
+How to show total frequency for one word?
+5. In 3.3, Completed map tasks are re-executed on a failure because their output is stored  
+on the local disk(s) of the failed machine and is therefore inaccessible.   
+How does reducer read the intermediate data from the local disk on mapper?
 6. In 3.4, shall we split the original input to M splits or by 64MB blocks? 
 A: M splits, 64MB is for GFS storage.
 7. In 3.5, Why does master keeps O(M * R) states in memory?
