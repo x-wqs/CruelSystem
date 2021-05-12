@@ -31,7 +31,7 @@ implementation (algo steps):
 
 fault tolerance
 
-- worker failure: reschedule and re-execute if a mapper fails
+- worker failure: reschedule another one to work, and re-execute if a mapper fails
 - master failure: checkpoints or simply abort
 - deterministic(?)
 
