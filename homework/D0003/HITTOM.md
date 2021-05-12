@@ -28,10 +28,10 @@ REGISTER_MAPPER(MyMapper)
 class MyReducer : public Reducer {
  public:
   Virtual void Reduce(ReduceInput** input) {
-	  auto sum_value;
+    auto sum_value;
     for (auto value : input->values()) sum_value += value;
-		Emit(sum_value);
-	}
+      Emit(sum_value);
+    }
 }
 REGISTER__REDUCER(MyReducer)
 
@@ -53,15 +53,15 @@ int main(int argc, char** argv) {
   out->set_format("text");
   out->set_reducer_class("Reducer");
 
-	out->set_combiner_class("Reducer");
+  out->set_combiner_class("Reducer");
 
-	spec.set_machines(2000);
+  spec.set_machines(2000);
   spec.set_map_megabytes(100);
   spec.set_reduce_megabytes(100);
 
-	MapReduceResult result;
+  MapReduceResult result;
   if (!MapReduce(spec, &result)) abort();
 
-	return 0;
+  return 0;
 }
 ```
