@@ -4,6 +4,7 @@ In practice, network bandwidth is scarce, so numbers of optimization about reduc
 And little redundant execution can speed up the whole process apparently, such as backup tasks, which tackles the straggler problem caused by slow machines.
 
 Analysis of Appendix A:
+```cpp
 #include "mapreduce/mapreduce.h"
 
 // mapper class
@@ -63,3 +64,4 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+```
