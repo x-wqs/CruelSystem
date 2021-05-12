@@ -7,13 +7,20 @@ Analysis of Appendix A:
 #include "mapreduce/mapreduce.h"
 
 // mapper class
+
 class MyMapper : public Mapper {
+
  public:
+ 
   virtual void Map(const MapInput& input) {
-	  auto key = Deal(input);
-		Emit(key, 1);
-	}
+  
+    auto key = Deal(input);
+	  
+    Emit(key, 1);
+		
+  }
 }
+
 REGISTER_MAPPER(MyMapper)
 
 // reducer class
@@ -28,10 +35,10 @@ class MyReducer : public Reducer {
 REGISTER__REDUCER(MyReducer)
 
 int main(int argc, char** argv) {
+  
   MapReduceSpecification spec;
-
-	// set mapper
-	for (int i = 1; i < argc; i++) {
+  // set mapper
+  for (int i = 1; i < argc; i++) {
     MapReduceInput* input = spec.add_input();
     input->set_format("text");
     input->set_filepattern(argv[i]);
@@ -39,7 +46,7 @@ int main(int argc, char** argv) {
   }
 
   // set reducer
-	MapReduceOutput* out = spec.output();
+  MapReduceOutput* out = spec.output();
   out->set_filebase("/outprefix");
   out->set_num_tasks(100);
   out->set_format("text");
