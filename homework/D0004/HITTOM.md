@@ -68,12 +68,13 @@
 - influential
 - lab1
 
+### scale
 multi-hours computations of terabytes data
 
-- goal: 
+### goal: 
 easy for non-experts writing distribute applications
 
-- application: 
+### application: 
 > 1) map/reduce sequential code
 > 2) mr framework deals with distributions
 
@@ -90,7 +91,9 @@ easy for non-experts writing distribute applications
 ## fault tolerance
 - workers fail:
 > cordinator reruns map/reduce
+
 > mapper can run twice(functional and deterministic)
+
 > reducer can run twice(just rename)
 
 - cordinator cann't fail
