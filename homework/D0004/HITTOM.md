@@ -67,6 +67,7 @@
 - illustration
 - influential
 - lab1
+
 multi-hours computations of terabytes data
 
 - goal: 
@@ -78,13 +79,13 @@ easy for non-experts writing distribute applications
 
 
 ## abstract view
-when all mappers done, reduces contacts to each mapper to know their data locations
+>  when all mappers done, reduces contacts to each mapper to know their data locations
 
-no commucation happens in mapper(gfs to local disk)
+>  no commucation happens in mapper(gfs to local disk)
 
-commucations happen in reducer(mapper disk to reducer machine cross network, out to gfs)
+> commucations happen in reducer(mapper disk to reducer machine cross network, out to gfs)
 
-mapreduce library do sorting, then hands it to reduce function
+> mapreduce library do sorting, then hands it to reduce function
 
 ## fault tolerance
 - workers fail:
