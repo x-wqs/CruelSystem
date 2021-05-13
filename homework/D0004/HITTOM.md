@@ -1,4 +1,4 @@
-##plan
+## plan
 what is distributed system
 historical context
 course structure
