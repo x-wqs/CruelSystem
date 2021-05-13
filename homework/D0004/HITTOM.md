@@ -80,6 +80,6 @@ cordinator reruns map/reduce
 mapper can run twice(functional and deterministic)
 reducer can run twice(just rename)
 
-cordinate cann't fail
+cordinator cann't fail
 
 slow workers: backup, tackle swagglers
