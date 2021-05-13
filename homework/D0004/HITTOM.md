@@ -33,11 +33,11 @@
 - papers: case study for a paticular big idea(strong recommand read before class)
 - labs: 
 > 1) mapreduce
-  2) replication using raft
-  3) repulicated k/v service
-  4) sharded k/v service
-  5) optional project with group
-  test cases are public
+> 2) replication using raft
+> 3) repulicated k/v service
+> 4) sharded k/v service
+> 5) optional project with group
+> test cases are public
 
 - exams: half semester and final
 
@@ -51,14 +51,14 @@
 ## main topics
 - fault tolerance:
 > 1) avalibility replication
-  2) recoverablity loggin/transaction, durable storage
+> 2) recoverablity loggin/transaction, durable storage
 
 - consistency：
   does get() return the value of the last put()
 
 - performance
 >  1) throughput
-   2) tail latency
+>  2) tail latency
 
 - implementation
 
@@ -74,7 +74,7 @@ easy for non-experts writing distribute applications
 
 - application: 
 > 1) map/reduce sequential code
-  2) mr framework deals with distributions
+> 2) mr framework deals with distributions
 
 
 ## abstract view
@@ -89,8 +89,8 @@ mapreduce library do sorting, then hands it to reduce function
 ## fault tolerance
 - workers fail:
 > cordinator reruns map/reduce
-  mapper can run twice(functional and deterministic)
-  reducer can run twice(just rename)
+> mapper can run twice(functional and deterministic)
+> reducer can run twice(just rename)
 
 - cordinator cann't fail
 
