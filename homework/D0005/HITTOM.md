@@ -166,7 +166,6 @@ func main() {
 ```
 ## more type
 ```
-???
 Unlike C, Go has no pointer arithmetic.
 ```
 - slice1.go
