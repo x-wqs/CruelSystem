@@ -1,6 +1,6 @@
 # Golang Part 2
 
-## Day 06, 0514
+## Day 06, 0515
 - https://tour.go-zh.org/methods/15
 
 ## Method
@@ -94,9 +94,95 @@ func main() {
 }
 ```
 
+## Reader Stream
+```go
+package main
+
+import (
+	"io"
+	"os"
+	"strings"
+)
+
+type rot13Reader struct {
+	r io.Reader
+}
+
+func (rr rot13Reader) Read(b []byte) (int, error) {
+	n, e := rr.r.Read(b)
+	for i := 0; i < n; i ++ {
+		if 'a' <= b[i] && b[i] <= 'z' {
+			b[i] = 'a' + (b[i] - 'a' + 13) % 26
+		} else if 'A' <= b[i] && b[i] <= 'Z' {
+			b[i] = 'A' + (b[i] - 'A' + 13) % 26
+		}			
+	}
+	return n, e
+}
+
+func main() {
+	s := strings.NewReader("Lbh penpxrq gur pbqr!")
+	r := rot13Reader{s}
+	io.Copy(os.Stdout, &r)
+}
+```
+
+## Image
+```go
+// https://tour.go-zh.org/methods/25
+
+package main
+
+import (
+	"image"
+	"image/color"
+	"golang.org/x/tour/pic"
+)
+
+type Image struct{}
+
+func (img Image) Bounds() image.Rectangle {
+	// return Rectanle{0, 0, 100, 100};
+	return image.Rect(0, 0, 100, 100)
+}
+
+func (img Image) ColorModel() color.Model {
+	return color.RGBAModel
+}
+
+func (img Image) At(x, y int) color.Color {
+	return color.RGBA{(uint8)x, (uint8)y, (uint8)255, (uint8)255}
+}
+
+func main() {
+	m := Image{}
+	pic.ShowImage(m)
+}
+
+/*
+go: finding module for package golang.org/x/tour/pic
+go: downloading golang.org/x/tour v0.0.0-20210512164546-a278aee398d5
+go: found golang.org/x/tour/pic in golang.org/x/tour v0.0.0-20210512164546-a278aee398d5
+./prog.go:22:27: syntax error: unexpected x, expecting comma or }
+./prog.go:23:1: syntax error: non-declaration statement outside function body
+*/
+```
+
+## Concurency
+- https://tour.go-zh.org/concurrency/3
+- 循环 for i := range c 会不断从信道接收值，直到它被关闭。
+- 		case c <- x:
+-		case <-quit:
+
+
+
 ## Notes
 - 抓狂了，从来没有哪个语言学起来这么痛苦
 - 这样可以么？照葫芦画瓢写了一个，还是不懂这个-2怎么来的
 
+Q: change git commit message after push
+A: git push --force origin main
 
+Q: change git commit message editor
+A: git config --global core.editor "vim"
 
