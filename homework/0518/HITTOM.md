@@ -111,27 +111,47 @@ three major types:
 > use checksum when concurrently append to a file
 
 
-##terms
+## terms
 anticipated 预期的
-radically 根本地
-mutate 改变
-onerous 繁重的
-sustained 持续的
-stringent 严格
-respectively 分别地
-flaky 片状
-orphaned 孤儿
-migration 移民
-sophisticated 复杂的
-bottlenect 瓶颈
-fragmentation 碎片化
-stagger 错开
-eternally 永恒的
-catastroph 灾难
-exclusively 只
-mingle 混合
-dwarf 矮人
-purge 清除
-permanent 永恒的
-semantic 语义学
 
+radically 根本地
+
+mutate 改变
+
+onerous 繁重的
+
+sustained 持续的
+
+stringent 严格
+
+respectively 分别地
+
+flaky 片状
+
+orphaned 孤儿
+
+migration 移民
+
+sophisticated 复杂的
+
+bottlenect 瓶颈
+
+fragmentation 碎片化
+
+stagger 错开
+
+eternally 永恒的
+
+catastroph 灾难
+
+exclusively 只
+
+mingle 混合
+
+dwarf 矮人
+
+purge 清除
+
+permanent 永恒的
+
+semantic 语义学
