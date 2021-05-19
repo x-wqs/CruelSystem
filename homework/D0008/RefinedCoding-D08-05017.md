@@ -41,6 +41,12 @@
 - Better RPC behavior: "at most once"
 - Go语言如何实现至多一次
 
+## RPC Example - KV
+- func (server *Server) Register(rcvr interface{}) error {
+- rpcs.Register(kv)
+- err := client.Call("KV.Put", &args, &reply)
+- func (kv *KV) Put(args *PutArgs, reply *PutReply) error {
+
 ## Idempotent Request
 - init connection faild
 - server broken at middle
@@ -52,6 +58,12 @@
 - https://stripe.com/blog/idempotency
 - Avoiding Double Payments in a Distributed Payments System
 - https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb
+
+## Questions
+- C++和Go可以传入参数引用，来修改参数的值，相当于返回多个参数
+- err := client.Call("KV.Put", &args, &reply)
+- 能不能问一下Java里面怎么才能修改参数的值，或者返回多个值啊？谢谢了！
+- https://pdos.csail.mit.edu/6.824/notes/kv.go
 
 ## Teminology      
 goroutines,例行程序  
