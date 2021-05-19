@@ -1,5 +1,5 @@
 # RefinedCoding-D09-018
-- GFS P6 - P10
+- GFS P11 - P15
 - https://pdos.csail.mit.edu/6.824/papers/gfs.pdf
 
 ## 1. Introduction
@@ -28,6 +28,9 @@
 ## 3. Sysetm Interfactions
 ## 3.1 Leases & Mutation Order
 ## 3.2 Data Flow
+
+## Experience
+- GFS有哪些应用场景？作者就稍微题了一下
 
 ## Terminology
 contiguous region	,	连续区域
