@@ -49,7 +49,7 @@
   
 ## Terminology  
 distinguish	,	区分  
-earliest opportunity.	,	最早的机会。  
+earliest opportunity	,	最早的机会  
 insert padding	,	插入填充  
 drawfed by	,	拉拢  
 chunk version number	,	块版本号  
@@ -68,7 +68,8 @@ resilient	,	有弹性的
 perspective	,	看法  
 prospective	,	预期  
 aspect	,	方面  
-discard extra paddinggragments	,	丢弃多余的填充格言  
+discard extra padding， 丢弃多余的填充  
+gragments	,	丢格言  
 occasional	,	偶然  
 lease	,	租  
 apply mutation	,	应用突变  
@@ -90,7 +91,7 @@ distributed lock manager	,	分布式锁管理器
 traditional write	,	传统写法  
 instantaneously	,	瞬间  
 stardard copy-on-write	,	标准型写时复制  
-interruption	,	打断  
+interruption	,	中断  
 revoke lease	,	撤销租赁  
 hence	,	因此  
 reclaim	,	回收  
@@ -115,12 +116,12 @@ overshelming	,	压倒性的
 additionally	,	此外  
 throttling	,	节流  
 gradually	,	逐步地  
-swamp	,	沼泽  
+swamp	,	使陷入困境  
 criteria	,	标准  
 reclaim	,	回收  
 undelete	,	取消删除  
 reclamation	,	开垦  
-uniform	,	制服  
+uniform	,	统一？  
 amortize	,	缓冲  
 spond	,	自发的  
 irreversible deletion	,	不可逆删除  
@@ -141,11 +142,11 @@ dominated	,	占主导地位
 elsewhere	,	别处  
 canonical name	,	规范名称  
 DNS alias	,	DNS别名  
-lag the primary slightly	,	稍微落后于小学  
+lag the primary slightly	,	稍微落后于集群主  
 fractions of a second	,	几分之一秒  
-shadow master	,	影子大师  
+shadow master	,	影子集群主  
 checksumming	,	校验和  
-corruption	,	腐败  
+corruption	,	损坏  
 moreover	,	而且  
 divergent	,	发散的  
 legal	,	合法的  
