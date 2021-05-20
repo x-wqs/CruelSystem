@@ -1,0 +1,33 @@
+Data Flow
+
+Each machine push data to the nearest machine in the network topology that has not received data.
+The distance between machines is measured by the ip address.
+For example, there are four machines S1, S2, S3, S4
+S1 is closest to the client, the client push data to S1, then S1 finds that S3 is closer to it, S1 pushes to S3, and so on.
+In order to reduce the delay, data is transmitted using TCP. And when a machine receives some data, it starts forwarding. Sending data does not affect the efficiency of the data.
+Send B bytes of data to R replicas, B/T + R*L T is the throughput of the network, L is the delay in transmitting data between the two machines, R * L is the delay
+In google, T=100Mbps L is much lower than 1ms, so 1MB data can be transmitted in 80ms.
+
+Atomic Record Append
+It only guarantees that the data is written at least once atomically (writes a sequence of byte streams), possibly multiple times, duplicate records appear
+
+The process of Record Append is similar to the process of write. The difference is that in Record Append, after the data is pushed to all the replicas of the last chunk of the file, the primary replica will check the new data.
+Will it exceed the boundary of the replica, if it will, the pad (this is the padding mentioned above) currently the replica to 64MB, also tell other replicas to do this, and then return to the client, let the client on the next chunk test. If not, everything will be as usual.
+
+If the record append fails on a replica, the client will retry the operation. May cause some results: different replicas of the same chunk will contain different data, may contain duplicate records, or may
+Including part of the record, GFS does not guarantee that the data for different replicas will be the same for each bit. It only guarantees that the data is written at least once atomically (writes a sequential byte stream). This property guarantees that if the record append operation succeeds, the data is written to the same offset of all replicas of the same chunk. This region is defined (there is a text in the back, it feels wrong),whereas intervening regions are inconsistent(hence undefined).Our applications can deal with inconsistent regions as we discussed in Section2.7.2(Implications for Application)
+I don't understand it here. Is the inconsistent region here echoing the previous padding or duplicate record?
+
+Snapshot
+
+Use snapshot on write to implement snapshot
+When the master receives the request for the snapshot, it recycles the lease of the chunk associated with the file involved in the snapshot, so that the operation of these files needs to contact the master (the primary replica replies to the client and it no longer holds the lease).
+
+After recovering these leases, the master records the log of the snapshot operation, and then executes the snapshot operation, which is roughly the reference count of the chunk +1, copying the source file or the metadata associated with the directory tree. This metadata is also
+Point to the same chunk
+After the snapshot operation, when the client wants to write chunk C, it will ask the master which replica holds the lease of chunk C. At this time, the master finds that the ref of chunk C is greater than 1, and then the master delays replying to the client.
+Master picks a new chunk handle C', the master asks the machine with chunk C to copy out a chunk locally, the chunk is called C', then the master gives one of the replica leases, and finally the reply
+The client, the subsequent operations are the same.
+
+
+
