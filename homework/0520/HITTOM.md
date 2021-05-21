@@ -39,7 +39,8 @@ https://pdos.csail.mit.edu/6.824/papers/gfs.pdf
 
 > master load is not bottlenect.(After a optimization of binary searches through namespace rather than scanning through large directories for a particular file)
 
-
+## experience
+> fsync() cost proportional to size of file rather than size of modified portion
 
 
 
