@@ -117,3 +117,5 @@ lift 举起
 innovate 创新
 
 shepherd 牧羊人
+
+proportional 成比例的
