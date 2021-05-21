@@ -111,7 +111,7 @@ designed to minimize master's involvement
 
 > master reply to clients or cloning chunkserver version number, thus they perform check operations
 
-##terms
+## terms
 lease 约定
 
 revoke 撤销
