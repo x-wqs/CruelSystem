@@ -54,16 +54,21 @@ designed to minimize master's involvement
 
 - reasons
 > chunkserver avalible
+
 > replication goal increased
 
 - priority factors
 > delta to goal
+
 > prefer chunks for live files than recently deleted files
+
 > boost priority of chunk blocking client progress
 
 - clone destination
 > goals are same as creation
+
 > limit numbers of active clones
+
 > limit bandwidth of each clone
 
 #### rebalance
@@ -86,14 +91,17 @@ designed to minimize master's involvement
 #### discussion
 - pros
 > First, simple and reliable, fault tolerant
-Second, done in batch and cost amortized, merge storage reclamation into regular background activities of master, done only when master is relatively free
-Third, delay provides safety against accidental and irreversible deletion
+
+> Second, done in batch and cost amortized, merge storage reclamation into regular background activities of master, done only when master is relatively free
+
+> Third, delay provides safety against accidental and irreversible deletion
 
 - cons
 > hinder user's effort to fine tune usage, such as frequently delete and create temporary files
 
 - patch for cons
 > expedite storage reclamation if deleted file explicitly deleted again
+
 > user-defined replication and reclamation policies
 
 ### stale replica detection
