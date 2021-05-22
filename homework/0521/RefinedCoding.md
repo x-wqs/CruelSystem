@@ -17,7 +17,29 @@
 - Q4: How to handle replica failure?
 - A: Master发现可用Replica的数量不够的时候会执行re-relication
 
+- Q: Why does GFS use write ahead logs?
+- Q: Why does GFS use checkpoints?
+- Q: 描述GFS记录追加的流程，见图2.
+- Q: 描述GFS Master奔溃重启的过程。
+- Q: 如何处理多个客户端对同一块文件追加的冲突？
+- Q: Seconday没有收到Primary的追加命令，客户端可以从Seconday读数据么
+- Q: 描述Primary奔溃的处理流程
+- Q: 带有过期数据的Chunk 4在其他副本宕机的时候是否可用？
+- Q: Seconday写入失败的时候，Primary该如何处理？
 
+## Teminology
+many themes	,	许多主题
+all the way to	,	一路走到
+tradeoffs between performance and consistency	,	性能与一致性之间的权衡
+SOSP	,	SOSP
+weak consistency	,	弱一致性
+single master	,	单主
+awkward	,	尴尬的
+circumstance	,	环境
+anomalous	,	异常的
+anomalies	,	异常现象
+anomaly
+retrospective	,	回顾性的
 
 
 
