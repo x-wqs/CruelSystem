@@ -1,7 +1,7 @@
 ## source
 
 
-> https://pdos.csail.mit.edu/6.824/papers/vm-ft.pdf 1~5
+> https://pdos.csail.mit.edu/6.824/papers/vm-ft.pdf 1~10
 
 > The Design of a
 Practical System for
