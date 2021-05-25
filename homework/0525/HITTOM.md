@@ -32,7 +32,7 @@
 > send operations(less cost)
 
 ## level of operations to replicate
-###application-level operations
+### application-level operations
 > gfs append write
 
 ### machine level
