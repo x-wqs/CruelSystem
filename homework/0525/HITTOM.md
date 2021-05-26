@@ -79,6 +79,19 @@
 ## output rule
 > before primary response, make sure recieve backup's ack
 
+## my questionss
+> Q1: is it really only non-determinsitic operations converted by logging channel? how aboud determinsitic operations? compressed binay packet?
+
+> A1: 
+
+> Q2: how is the flag set? when there is one primary, the flag is id? when primary fail, the flag is 0? when another primary want to set flag when getting non-zero flag, it means already has a primary?
+
+> A2:
+
+> Q3: why are input packets non-determined?
+
+> A3: 
+
 ## terms
 > malicious 恶意的
 
