@@ -92,6 +92,10 @@
 
 > A3: 
 
+> Q4: is it mentioned that how many backups usually choose
+
+> A4:
+
 ## terms
 > malicious 恶意的
 
