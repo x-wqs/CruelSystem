@@ -27,7 +27,7 @@
 > backward approach: error --> fault, more applicable to distributed progress
 
 ## set up go
-## go version
+### go version
 > recommand version: 1.15
 
 > my version: https://golang.org/dl/  go1.15.12.linux-amd64.tar.gz
