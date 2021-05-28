@@ -82,3 +82,16 @@ do some pre-work and stick the result to the registers
 FT is similar to non-FT
 
 primary have to wait the backup, so the bandwidth is reduced
+
+HTTP:
+- Non-persistent HTTP
+- Persistent HTTP
+
+```http
+GET /path/to/file/index.html HTTP/1.1
+Host: www.educative.io
+Connection: close
+User-agent: Mozilla/5.0
+Accept-language: fr
+Accept: text/html
+```
