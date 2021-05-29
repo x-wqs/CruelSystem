@@ -9,19 +9,52 @@ import "os"
 import "net/rpc"
 import "net/http"
 
-type Task stuct {
+type TaskType int
+type TaskStatus int
+
+// https://www.educative.io/edpresso/what-is-an-enum-in-golang
+const (
+	MapTask TaskType = iota
+	ReduceTask
+	None
+	Exit
+)
+
+const (
+	New TaskStatus = iota
+	InProgress
+	Done
+)
+
+type Task struct {
 	Id int
-	Type int
+	Type TaskType
 	File string
 	WorkerId int
-	Status int
+	Status TaskStatus
 }
 
 type Coordinator struct {
 	// Your definitions here.
-	mu sync.Mutex
+	mutex sync.Mutex
 	mapTasks []Task
 	reduceTasks []Task
+}
+
+func (c *Coordinator) SelectTask(workerId int) *Task {
+	var tasks []Task
+	if len(c.mapTasks) > 0 {
+		tasks = c.mapTasks
+	} else {
+		tasks = c.reduceTasks
+	}
+	for _, task := range tasks {
+		if task.Status == New {
+			task.Status = InProgress
+			return &task
+		}
+	}
+	return &Task { -1, None, "", -1, Done }
 }
 
 // Your code here -- RPC handlers for the worker to call.
@@ -36,6 +69,22 @@ func (c *Coordinator) Example(args *ExampleArgs, reply *ExampleReply) error {
 	return nil
 }
 
+func (c *Coordinator) TaskRequestHandler(request *TaskRequest, response *TaskResponse) error {
+	c.mutex.Lock()
+	var task Task = c.SelectTask()
+	task.WorkerId = request.WorkerId;
+
+	response.TaskId = task.Id
+	response.TaskType = task.Type
+	response.TaskFile = task.File
+
+	c.mutex.Unlock()
+	// TODO: thread
+	return nil
+}
+
+// cp people/RefinedCoding/6.824/src/mr/rpc.go homework/0528/RefinedCoding-rpc.go
+// cp people/RefinedCoding/6.824/src/mr/coordinator.go homework/0529/RefinedCoding-coordinator.go
 
 //
 // start a thread that listens for RPCs from worker.go

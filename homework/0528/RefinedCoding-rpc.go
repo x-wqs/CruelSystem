@@ -30,7 +30,7 @@ type TaskRequest struct {
 
 type TaskResponse struct {
 	TaskId int
-	TaskType int
+	TaskType TaskType
 	TaskFile string
 }
 
