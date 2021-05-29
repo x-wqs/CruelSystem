@@ -3,11 +3,19 @@ package mr
 import (
 	"log"
 	"sync"
+	"time"
 )
 import "net"
 import "os"
 import "net/rpc"
 import "net/http"
+
+/*
+cp people/RefinedCoding/6.824/src/mr/rpc.go homework/0528/RefinedCoding-rpc.go
+cp people/RefinedCoding/6.824/src/mr/coordinator.go homework/0529/RefinedCoding-coordinator.go
+*/
+
+const TaskTimeOut = 10
 
 type TaskType int
 type TaskStatus int
@@ -57,6 +65,18 @@ func (c *Coordinator) SelectTask(workerId int) *Task {
 	return &Task { -1, None, "", -1, Done }
 }
 
+func (c *Coordinator) CheckTaskStatus(task *Task) {
+	if task.Type == MapTask || task.Type == ReduceTask {
+		<- time.After(time.Second * TaskTimeOut)
+		c.mutex.Lock()
+		defer c.mutex.Unlock()
+		if task.Status == InProgress {
+			task.Status = New
+			task.WorkerId = -1
+		}
+	}
+}
+
 // Your code here -- RPC handlers for the worker to call.
 
 //
@@ -79,12 +99,40 @@ func (c *Coordinator) TaskRequestHandler(request *TaskRequest, response *TaskRes
 	response.TaskFile = task.File
 
 	c.mutex.Unlock()
-	// TODO: thread
+	go c.CheckTaskStatus(task)
+
 	return nil
 }
 
-// cp people/RefinedCoding/6.824/src/mr/rpc.go homework/0528/RefinedCoding-rpc.go
-// cp people/RefinedCoding/6.824/src/mr/coordinator.go homework/0529/RefinedCoding-coordinator.go
+func (c *Coordinator) TaskStatusHandler(request *TaskStatusRequest, response *TaskStatusResponse) error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	// TODO: var task *Task = c.Tasks[request.TaskId]
+	var task *Task
+	if  request.TaskType == MapTask {
+		task = &c.mapTasks[request.TaskId]
+	} else if request.TaskType == ReduceTask {
+		task = &c.reduceTasks[request.TaskId]
+	} else {
+		// TODO: check error
+	}
+
+	if task.WorkerId == request.WorkerId && task.Status == InProgress {
+		task.Status = Done
+		// TODO: c.Tasks[request.TaskType]
+		if request.TaskType == MapTask {
+			c.mapTasks = append(c.mapTasks[:request.TaskId], c.mapTasks[request.TaskId + 1 : ]...)
+		} else if request.TaskType == ReduceTask {
+			c.mapTasks = append(c.mapTasks[:request.TaskId], c.mapTasks[request.TaskId + 1 : ]...)
+		}
+	}
+
+	// TODO: update task status and return all task done ?
+	response.Done = len(c.mapTasks) == 0 && len(c.reduceTasks) == 0
+
+	return nil
+}
 
 //
 // start a thread that listens for RPCs from worker.go

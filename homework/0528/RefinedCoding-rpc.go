@@ -36,6 +36,7 @@ type TaskResponse struct {
 
 type TaskStatusRequest struct {
 	TaskId int
+	TaskType TaskType
 	WorkerId int
 }
 
