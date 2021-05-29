@@ -1,7 +1,10 @@
 package mr
 
 import (
+	"encoding/base64"
+	"fmt"
 	"log"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -13,6 +16,7 @@ import "net/http"
 /*
 cp people/RefinedCoding/6.824/src/mr/rpc.go homework/0528/RefinedCoding-rpc.go
 cp people/RefinedCoding/6.824/src/mr/coordinator.go homework/0529/RefinedCoding-coordinator.go
+cp people/RefinedCoding/6.824/src/mr/worker.go homework/0529/RefinedCoding-worker.go
 */
 
 const TaskTimeOut = 10
@@ -124,7 +128,7 @@ func (c *Coordinator) TaskStatusHandler(request *TaskStatusRequest, response *Ta
 		if request.TaskType == MapTask {
 			c.mapTasks = append(c.mapTasks[:request.TaskId], c.mapTasks[request.TaskId + 1 : ]...)
 		} else if request.TaskType == ReduceTask {
-			c.mapTasks = append(c.mapTasks[:request.TaskId], c.mapTasks[request.TaskId + 1 : ]...)
+			c.reduceTasks = append(c.reduceTasks[:request.TaskId], c.reduceTasks[request.TaskId + 1 : ]...)
 		}
 	}
 
@@ -134,6 +138,14 @@ func (c *Coordinator) TaskStatusHandler(request *TaskStatusRequest, response *Ta
 	return nil
 }
 
+func (c *Coordinator) ReduceCountHandler(request *ReduceCountRequest, response *ReduceCountResponse) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	response.ReduceCount = len(c.reduceTasks)
+
+	// return nil
+}
+
 //
 // start a thread that listens for RPCs from worker.go
 //
@@ -141,9 +153,9 @@ func (c *Coordinator) server() {
 	rpc.Register(c)
 	rpc.HandleHTTP()
 	//l, e := net.Listen("tcp", ":1234")
-	sockname := coordinatorSock()
-	os.Remove(sockname)
-	l, e := net.Listen("unix", sockname)
+	socket := coordinatorSock()
+	os.Remove(socket)
+	l, e := net.Listen("unix", socket)
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}
@@ -155,12 +167,12 @@ func (c *Coordinator) server() {
 // if the entire job has finished.
 //
 func (c *Coordinator) Done() bool {
-	ret := false
 
 	// Your code here.
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
 
-
-	return ret
+	return len(c.mapTasks) == 0 && len(c.reduceTasks) == 0
 }
 
 //
@@ -172,8 +184,27 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	c := Coordinator{}
 
 	// Your code here.
+	c.mapTasks = make([]Task, 0, len(files))
+	c.reduceTasks = make([]Task, 0, nReduce)
 
+	for i := 0; i < len(files); i ++ {
+		c.mapTasks = append(c.mapTasks, Task { i, MapTask, files[i], -1, New })
+	}
+
+	for i := 0; i < nReduce; i ++ {
+		c.reduceTasks = append(c.reduceTasks, Task { i, ReduceTask, nil, -1, New })
+	}
 
 	c.server()
+
+	outputs, _ = filepath.Glob("mr-out-*")
+	for _, f := range outputs {
+		if err := os.Remove(f); err != nil {
+			fmt.Errorf("Failed to remove file %v\n", f)
+		}
+	}
+
+	// TODO: create folder for intermediate results
+
 	return &c
 }
