@@ -1,16 +1,18 @@
 package mr
 
 import (
+	"bufio"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+	"sort"
 	"time"
 )
 import "log"
 import "net/rpc"
 import "hash/fnv"
-
-nReduce :=  0
 
 //
 // Map functions return a slice of KeyValue.
@@ -47,27 +49,114 @@ func getTask() (*TaskResponse, bool) {
 func finishTask(taskId int, taskType TaskType) (bool, bool) {
 	request := TaskStatusRequest{taskId, taskType, os.Getpid() }
 	response := TaskStatusResponse{}
-	success = call("Coordinator.FinishTask", &request, &response)
+	success := call("Coordinator.FinishTask", &request, &response)
 	return response.Done, success
 }
 
-func doMap(taskId int, file string, mapf func(string, string) []KeyValue) {
-	f, error := os.Open(file)
-	if error != nil {
+func doMap(mapId int, file string, nReduce int, mapf func(string, string) []KeyValue) {
+	f, e := os.Open(file)
+	if e != nil {
 		fmt.Println("Failed to open file %v", file)
 		return
 	}
 
-	bytes, error := ioutil.ReadAll(f)
-	if error != nil {
+	bytes, e := ioutil.ReadAll(f)
+	if e != nil {
 		fmt.Println("Failed to read file %v", file)
 		return
 	}
 
 	kvs := mapf(file, string(bytes))
+	files := make([]*os.File, 0, nReduce)
+	buffers := make([]*bufio.Writer, 0, nReduce)
+	encoders := make([]*json.Encoder, 0, nReduce)
 
-	// TODO: write intermediate results
+	// write intermediate results
+	for i := 0; i < nReduce; i ++ {
+		// TODO: temp path
+		path := fmt.Sprintf("map-%v-%v-%v", mapId, i, os.Getpid())
+		f, e := os.Create(path)
+		if e != nil {
+			fmt.Println("Failed to create file %v", path)
+		}
+		buffer := bufio.NewWriter(f)
+		files = append(files, f)
+		buffers = append(buffers, buffer)
+		encoders = append(encoders, json.NewEncoder(buffer))
+	}
 
+	// split map result to nReduce intermediate files
+	for _, kv := range kvs {
+		index := ihash(kv.Key) % nReduce
+		e := encoders[index].Encode(&kv)
+		if e != nil {
+			fmt.Println("Failed to encode %v", &kv)
+		}
+	}
+
+	for i, buffer := range buffers {
+		e := buffer.Flush()
+		if e != nil {
+			fmt.Println("Failed to flush buffer for file %v", files[i].Name())
+		}
+	}
+
+	for i, file := range files {
+		file.Close();
+		e := os.Rename(file.Name(), fmt.Sprintf("map-%v-%v", mapId, i))
+		if e != nil {
+			fmt.Println("Failed to rename file %v", file.Name())
+		}
+	}
+}
+
+func doReduce(reduceId int, reducef func(string, []string) string) {
+	files, e := filepath.Glob(fmt.Sprintf("map-*-%v", reduceId))
+	if e != nil {
+		fmt.Println("Failed to list map results")
+	}
+
+	kvs := make(map[string][]string)
+	for _, path := range files {
+		f, e := os.Open(path)
+		if e != nil {
+			fmt.Println("Failed to open file %v", path)
+		}
+
+		decode := json.NewDecoder(f)
+		for decode.More() {
+			var kv KeyValue
+			e = decode.Decode(&kv)
+			kvs[kv.Key] = append(kvs[kv.Key], kv.Value)
+		}
+	}
+
+	// write reduce result
+	keys := make([]string, 0, len(kvs))
+	for key := range kvs {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	path := fmt.Sprintf("reduce-temp-%v-%v", reduceId, os.Getpid())
+	file, e := os.Create(path)
+	if e != nil {
+		fmt.Println("Failed to create file %v", path)
+	}
+
+	for _, key := range keys {
+		count := reducef(key, kvs[key])
+		_, e := fmt.Fprintf(file, "%v %v\n", key, count)
+		if e != nil {
+			fmt.Println("Failed to write MapReduce result (%v, %v) to file %v", key, count, path)
+		}
+	}
+
+	file.Close()
+	e = os.Rename(path, fmt.Sprintf("reduce-%v.txt", reduceId))
+	if e != nil {
+		fmt.Println("Failed to rename file %v", path)
+	}
 }
 
 //
@@ -76,7 +165,7 @@ func doMap(taskId int, file string, mapf func(string, string) []KeyValue) {
 func Worker(mapf func(string, string) []KeyValue, reducef func(string, []string) string) {
 
 	// Your worker implementation here.
-	_, success := getReduceCount()
+	nReduce, success := getReduceCount()
 	if !success {
 		fmt.Println("Failed to get the count of reduce tasks, quiting ...")
 		return
@@ -90,16 +179,18 @@ func Worker(mapf func(string, string) []KeyValue, reducef func(string, []string)
 			fmt.Println("Failed to get task, quiting ...")
 			return
 		}
+
+		done, success := false, true
 		if response.TaskType == MapTask {
-			doMap(response.TaskId, response.TaskFile, mapf)
-			status, success = finishTask(response.TaskId, MapTask)
+			doMap(response.TaskId, response.TaskFile, nReduce, mapf)
+			done, success = finishTask(response.TaskId, MapTask)
 		} else if response.TaskType == ReduceTask {
 			doReduce(response.TaskId, reducef)
-			status, success = finishTask(response.TaskId, ReduceTask)
+			done, success = finishTask(response.TaskId, ReduceTask)
 		}
 
-		if status != Done || !success {
-			fmt.Println("Faild to update task status, quiting")
+		if done || !success {
+			fmt.Println("All tasks done or Coordinator unavailable, Worker quiting ...")
 			return
 		}
 

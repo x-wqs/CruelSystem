@@ -1,7 +1,7 @@
 package mr
 
 import (
-	"encoding/base64"
+	//"encoding/base64"
 	"fmt"
 	"log"
 	"path/filepath"
@@ -95,7 +95,7 @@ func (c *Coordinator) Example(args *ExampleArgs, reply *ExampleReply) error {
 
 func (c *Coordinator) GetTask(request *TaskRequest, response *TaskResponse) error {
 	c.mutex.Lock()
-	var task Task = c.SelectTask()
+	task := c.SelectTask(request.WorkerId)
 	task.WorkerId = request.WorkerId;
 
 	response.TaskId = task.Id
@@ -192,12 +192,12 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	}
 
 	for i := 0; i < nReduce; i ++ {
-		c.reduceTasks = append(c.reduceTasks, Task { i, ReduceTask, nil, -1, New })
+		c.reduceTasks = append(c.reduceTasks, Task { i, ReduceTask, "", -1, New })
 	}
 
 	c.server()
 
-	outputs, _ = filepath.Glob("mr-out-*")
+	outputs, _ := filepath.Glob("mr-out-*")
 	for _, f := range outputs {
 		if err := os.Remove(f); err != nil {
 			fmt.Errorf("Failed to remove file %v\n", f)
