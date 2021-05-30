@@ -16,7 +16,7 @@ import "net/http"
 /*
 cp people/RefinedCoding/6.824/src/mr/rpc.go homework/0528/RefinedCoding-rpc.go
 cp people/RefinedCoding/6.824/src/mr/coordinator.go homework/0529/RefinedCoding-coordinator.go
-cp people/RefinedCoding/6.824/src/mr/worker.go homework/0529/RefinedCoding-worker.go
+cp people/RefinedCoding/6.824/src/mr/worker.go homework/0530/RefinedCoding-worker.go
 */
 
 const TaskTimeOut = 10
@@ -93,7 +93,7 @@ func (c *Coordinator) Example(args *ExampleArgs, reply *ExampleReply) error {
 	return nil
 }
 
-func (c *Coordinator) TaskRequestHandler(request *TaskRequest, response *TaskResponse) error {
+func (c *Coordinator) GetTask(request *TaskRequest, response *TaskResponse) error {
 	c.mutex.Lock()
 	var task Task = c.SelectTask()
 	task.WorkerId = request.WorkerId;
@@ -108,7 +108,7 @@ func (c *Coordinator) TaskRequestHandler(request *TaskRequest, response *TaskRes
 	return nil
 }
 
-func (c *Coordinator) TaskStatusHandler(request *TaskStatusRequest, response *TaskStatusResponse) error {
+func (c *Coordinator) FinishTask(request *TaskStatusRequest, response *TaskStatusResponse) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
@@ -138,7 +138,7 @@ func (c *Coordinator) TaskStatusHandler(request *TaskStatusRequest, response *Ta
 	return nil
 }
 
-func (c *Coordinator) ReduceCountHandler(request *ReduceCountRequest, response *ReduceCountResponse) {
+func (c *Coordinator) GetReduceCount(request *ReduceCountRequest, response *ReduceCountResponse) {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	response.ReduceCount = len(c.reduceTasks)

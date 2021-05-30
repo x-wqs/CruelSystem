@@ -1,10 +1,16 @@
 package mr
 
-import "fmt"
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"time"
+)
 import "log"
 import "net/rpc"
 import "hash/fnv"
 
+nReduce :=  0
 
 //
 // Map functions return a slice of KeyValue.
@@ -24,18 +30,81 @@ func ihash(key string) int {
 	return int(h.Sum32() & 0x7fffffff)
 }
 
+func getReduceCount() (int, bool) {
+	response := ReduceCountResponse{}
+	success := call("Coordinator.GetReduceCount", ReduceCountRequest{}, &response)
+	return response.ReduceCount, success
+}
+
+func getTask() (*TaskResponse, bool) {
+	// TODO: create worker ID
+	request := TaskRequest{ os.Getpid() }
+	response := TaskResponse{}
+	success := call("Coordinator.GetTask", &request, &response)
+	return &response, success
+}
+
+func finishTask(taskId int, taskType TaskType) (bool, bool) {
+	request := TaskStatusRequest{taskId, taskType, os.Getpid() }
+	response := TaskStatusResponse{}
+	success = call("Coordinator.FinishTask", &request, &response)
+	return response.Done, success
+}
+
+func doMap(taskId int, file string, mapf func(string, string) []KeyValue) {
+	f, error := os.Open(file)
+	if error != nil {
+		fmt.Println("Failed to open file %v", file)
+		return
+	}
+
+	bytes, error := ioutil.ReadAll(f)
+	if error != nil {
+		fmt.Println("Failed to read file %v", file)
+		return
+	}
+
+	kvs := mapf(file, string(bytes))
+
+	// TODO: write intermediate results
+
+}
 
 //
 // main/mrworker.go calls this function.
 //
-func Worker(mapf func(string, string) []KeyValue,
-	reducef func(string, []string) string) {
+func Worker(mapf func(string, string) []KeyValue, reducef func(string, []string) string) {
 
 	// Your worker implementation here.
+	_, success := getReduceCount()
+	if !success {
+		fmt.Println("Failed to get the count of reduce tasks, quiting ...")
+		return
+	}
 
 	// uncomment to send the Example RPC to the coordinator.
 	// CallExample()
+	for {
+		response, success := getTask()
+		if !success {
+			fmt.Println("Failed to get task, quiting ...")
+			return
+		}
+		if response.TaskType == MapTask {
+			doMap(response.TaskId, response.TaskFile, mapf)
+			status, success = finishTask(response.TaskId, MapTask)
+		} else if response.TaskType == ReduceTask {
+			doReduce(response.TaskId, reducef)
+			status, success = finishTask(response.TaskId, ReduceTask)
+		}
 
+		if status != Done || !success {
+			fmt.Println("Faild to update task status, quiting")
+			return
+		}
+
+		time.Sleep(time.Second)
+	}
 }
 
 //
