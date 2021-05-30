@@ -56,13 +56,13 @@ func finishTask(taskId int, taskType TaskType) (bool, bool) {
 func doMap(mapId int, file string, nReduce int, mapf func(string, string) []KeyValue) {
 	f, e := os.Open(file)
 	if e != nil {
-		fmt.Println("Failed to open file %v", file)
+		fmt.Printf("Failed to open file %v", file)
 		return
 	}
 
 	bytes, e := ioutil.ReadAll(f)
 	if e != nil {
-		fmt.Println("Failed to read file %v", file)
+		fmt.Printf("Failed to read file %v", file)
 		return
 	}
 
@@ -77,7 +77,7 @@ func doMap(mapId int, file string, nReduce int, mapf func(string, string) []KeyV
 		path := fmt.Sprintf("map-%v-%v-%v", mapId, i, os.Getpid())
 		f, e := os.Create(path)
 		if e != nil {
-			fmt.Println("Failed to create file %v", path)
+			fmt.Printf("Failed to create file %v", path)
 		}
 		buffer := bufio.NewWriter(f)
 		files = append(files, f)
@@ -90,14 +90,14 @@ func doMap(mapId int, file string, nReduce int, mapf func(string, string) []KeyV
 		index := ihash(kv.Key) % nReduce
 		e := encoders[index].Encode(&kv)
 		if e != nil {
-			fmt.Println("Failed to encode %v", &kv)
+			fmt.Printf("Failed to encode %v", &kv)
 		}
 	}
 
 	for i, buffer := range buffers {
 		e := buffer.Flush()
 		if e != nil {
-			fmt.Println("Failed to flush buffer for file %v", files[i].Name())
+			fmt.Printf("Failed to flush buffer for file %v", files[i].Name())
 		}
 	}
 
@@ -105,7 +105,7 @@ func doMap(mapId int, file string, nReduce int, mapf func(string, string) []KeyV
 		file.Close();
 		e := os.Rename(file.Name(), fmt.Sprintf("map-%v-%v", mapId, i))
 		if e != nil {
-			fmt.Println("Failed to rename file %v", file.Name())
+			fmt.Printf("Failed to rename file %v", file.Name())
 		}
 	}
 }
@@ -120,7 +120,7 @@ func doReduce(reduceId int, reducef func(string, []string) string) {
 	for _, path := range files {
 		f, e := os.Open(path)
 		if e != nil {
-			fmt.Println("Failed to open file %v", path)
+			fmt.Printf("Failed to open file %v", path)
 		}
 
 		decode := json.NewDecoder(f)
@@ -141,21 +141,21 @@ func doReduce(reduceId int, reducef func(string, []string) string) {
 	path := fmt.Sprintf("reduce-temp-%v-%v", reduceId, os.Getpid())
 	file, e := os.Create(path)
 	if e != nil {
-		fmt.Println("Failed to create file %v", path)
+		fmt.Printf("Failed to create file %v", path)
 	}
 
 	for _, key := range keys {
 		count := reducef(key, kvs[key])
 		_, e := fmt.Fprintf(file, "%v %v\n", key, count)
 		if e != nil {
-			fmt.Println("Failed to write MapReduce result (%v, %v) to file %v", key, count, path)
+			fmt.Printf("Failed to write MapReduce result (%v, %v) to file %v", key, count, path)
 		}
 	}
 
 	file.Close()
 	e = os.Rename(path, fmt.Sprintf("reduce-%v.txt", reduceId))
 	if e != nil {
-		fmt.Println("Failed to rename file %v", path)
+		fmt.Printf("Failed to rename file %v", path)
 	}
 }
 
