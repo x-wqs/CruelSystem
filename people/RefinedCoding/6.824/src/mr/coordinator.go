@@ -17,6 +17,10 @@ import "net/http"
 cp people/RefinedCoding/6.824/src/mr/rpc.go homework/0528/RefinedCoding-rpc.go
 cp people/RefinedCoding/6.824/src/mr/coordinator.go homework/0529/RefinedCoding-coordinator.go
 cp people/RefinedCoding/6.824/src/mr/worker.go homework/0530/RefinedCoding-worker.go
+
+cp src/mr/rpc.go ../../../homework/0528/RefinedCoding-rpc.go
+cp src/mr/coordinator.go ../../../homework/0529/RefinedCoding-coordinator.go
+cp src/mr/worker.go ../../../homework/0530/RefinedCoding-worker.go
 */
 
 const TaskTimeOut = 10

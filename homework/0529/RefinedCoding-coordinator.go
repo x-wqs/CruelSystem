@@ -17,6 +17,10 @@ import "net/http"
 cp people/RefinedCoding/6.824/src/mr/rpc.go homework/0528/RefinedCoding-rpc.go
 cp people/RefinedCoding/6.824/src/mr/coordinator.go homework/0529/RefinedCoding-coordinator.go
 cp people/RefinedCoding/6.824/src/mr/worker.go homework/0530/RefinedCoding-worker.go
+
+cp src/mr/rpc.go ../../../homework/0528/RefinedCoding-rpc.go
+cp src/mr/coordinator.go ../../../homework/0529/RefinedCoding-coordinator.go
+cp src/mr/worker.go ../../../homework/0530/RefinedCoding-worker.go
 */
 
 const TaskTimeOut = 10
@@ -53,7 +57,7 @@ type Coordinator struct {
 	reduceTasks []Task
 }
 
-func (c *Coordinator) SelectTask(workerId int) *Task {
+func (c *Coordinator) SelectTask() *Task {
 	var tasks []Task
 	if len(c.mapTasks) > 0 {
 		tasks = c.mapTasks
@@ -83,7 +87,7 @@ func (c *Coordinator) CheckTaskStatus(task *Task) {
 
 // Your code here -- RPC handlers for the worker to call.
 
-//
+// Example
 // an example RPC handler.
 //
 // the RPC argument and reply types are defined in rpc.go.
@@ -95,8 +99,8 @@ func (c *Coordinator) Example(args *ExampleArgs, reply *ExampleReply) error {
 
 func (c *Coordinator) GetTask(request *TaskRequest, response *TaskResponse) error {
 	c.mutex.Lock()
-	task := c.SelectTask(request.WorkerId)
-	task.WorkerId = request.WorkerId;
+	task := c.SelectTask()
+	task.WorkerId = request.WorkerId
 
 	response.TaskId = task.Id
 	response.TaskType = task.Type
@@ -162,7 +166,7 @@ func (c *Coordinator) server() {
 	go http.Serve(l, nil)
 }
 
-//
+// Done
 // main/mrcoordinator.go calls Done() periodically to find out
 // if the entire job has finished.
 //
@@ -175,7 +179,7 @@ func (c *Coordinator) Done() bool {
 	return len(c.mapTasks) == 0 && len(c.reduceTasks) == 0
 }
 
-//
+// MakeCoordinator
 // create a Coordinator.
 // main/mrcoordinator.go calls this function.
 // nReduce is the number of reduce tasks to use.
@@ -200,7 +204,8 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 	outputs, _ := filepath.Glob("mr-out-*")
 	for _, f := range outputs {
 		if err := os.Remove(f); err != nil {
-			fmt.Errorf("Failed to remove file %v\n", f)
+			// Fixed: Possible formatting directive in '"Failed to remove file %v\n"'
+			fmt.Printf("Failed to remove file %v\n", f)
 		}
 	}
 
