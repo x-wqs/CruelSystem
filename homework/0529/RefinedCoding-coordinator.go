@@ -138,16 +138,20 @@ func (c *Coordinator) FinishTask(request *TaskStatusRequest, response *TaskStatu
 
 	// TODO: update task status and return all task done ?
 	response.Done = len(c.mapTasks) == 0 && len(c.reduceTasks) == 0
-
 	return nil
 }
 
-func (c *Coordinator) GetReduceCount(request *ReduceCountRequest, response *ReduceCountResponse) {
+/*
+2021/05/30 11:16:45 rpc.Register: method "CheckTaskStatus" has 2 input parameters; needs exactly three
+2021/05/30 11:16:45 rpc.Register: method "Done" has 1 input parameters; needs exactly three
+2021/05/30 11:16:45 rpc.Register: method "GetReduceCount" has 0 output parameters; needs exactly one
+2021/05/30 11:16:45 rpc.Register: method "SelectTask" has 1 input parameters; needs exactly three
+*/
+func (c *Coordinator) GetReduceCount(request *ReduceCountRequest, response *ReduceCountResponse) error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 	response.ReduceCount = len(c.reduceTasks)
-
-	// return nil
+	return nil
 }
 
 //

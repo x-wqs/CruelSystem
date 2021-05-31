@@ -153,7 +153,7 @@ func doReduce(reduceId int, reducef func(string, []string) string) {
 	}
 
 	file.Close()
-	e = os.Rename(path, fmt.Sprintf("reduce-%v.txt", reduceId))
+	e = os.Rename(path, fmt.Sprintf("mr-out-%v", reduceId))
 	if e != nil {
 		fmt.Printf("Failed to rename file %v\n", path)
 	}
