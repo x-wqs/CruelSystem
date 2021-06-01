@@ -22,6 +22,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	path, _ := os.Getwd()
+	fmt.Println(path)
+
 	mapf, reducef := loadPlugin(os.Args[1])
 
 	mr.Worker(mapf, reducef)
