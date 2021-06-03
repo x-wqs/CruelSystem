@@ -1,11 +1,36 @@
 # Consensus Algorithm 一致性算法  
 - P4 - P6  
   
-  
-  
+## 5 Raft一致性算法  
+- 管理主节点，并接受  
+- Raft把一致性问题分解成独立的子问题
+- 主节点选取
+- 日志复制
+- 选取安全
+- 主节点只追加
+- 日志匹配
+- 主节点完成性
+- 状态机安全
+
+### 5.1 Raft基础
+- 集群有五个节点，每个节点三种状态：主节点，备选，随从
+- 一般情况，一个主节点，多个从节点
+- 主节点处理所有节点的通信
+- 从节点如果没有收到主节点的心跳，则进入备选状态
+- 主节点或者从节点发现自己的期限过期，则进入随从状态
+
+### 5.2 主节点选举
+- 主节点发送AppendEntries给从节点
+- 从节点如果没收到心跳，则发起选举
+- 如果开始选举，从节点则增加自己的期限，发送RequestVote给其他所有节点
+- 结果有三种：赢得选举，其他节点选举成功，超时
+- 如果在备选期收到AppendEntries心跳，且期限数大于等于自己的，该节点则返回从节点状态
+- 如果期限数小于自己的，则继续停留在备选状态
+- 如何避免split votes分票？
+- 如何判断日志提交成功？
   
 ## Terminology    
-identical,	,	完全相同的，  
+identical,	完全相同的，  
 fault tolerance	,	容错  
 single cluster leader	,	单集群领导  
 a separate replicated state machine	,	一个单独的复制状态机  
@@ -82,6 +107,7 @@ piecewise	,	逐段地
 electing a distinguished leader	,	选出一位杰出的领袖  
 consulting	,	咨询  
 decompose	,	分解  
+TODO, P4
   
   
   
