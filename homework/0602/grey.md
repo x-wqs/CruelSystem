@@ -1,3 +1,5 @@
+Note: this includes both 0601 and 0602 homework.
+
 # Raft Paper
 
 Highlights:
