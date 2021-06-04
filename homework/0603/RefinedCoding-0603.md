@@ -110,8 +110,6 @@ leader completeness property	,	领导者完整性属性
 precise	,	精确的  
 proof sketch	,	校样草图  
   
-TODO-541  
-  
   
   
   
