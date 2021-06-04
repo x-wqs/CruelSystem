@@ -238,10 +238,6 @@ func main() {
 }
 ```
 # TODO
-- concurrency 10 Exercise: Web Crawler
-```
-
-```
 - methods 20 Exercise: Errors
 ```
 
@@ -258,4 +254,7 @@ func main() {
 ```
 
 ```
+- concurrency 10 Exercise: Web Crawler
+```
 
+```
