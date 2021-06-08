@@ -1,0 +1,48 @@
+# 20210607 - MIT 6.824  Lecture 5 Raft
+
+## Video
+[Youtube](https://www.youtube.com/watch?v=R2-9bsKmEbo&feature=youtu.be)
+
+
+## Pattern
+All distriburted systems have single points of failure
+
+mapreduce: coordinator
+gdfs: master
+vm: storage server 
+
+the reason use single machine rather than the multiple machine is to **avoid the split brain**
+
+
+## Case
+suppose there are two replica servers, and client 1 will contact server 1 and server 2,
+
+it cannot be determined whether server2 is failed or due to the network partition that s2 cannot response.
+
+## Solution - Majority Rule
+
+instead of two server, we use three. 
+
+when a leader accepts an operation in a log of majority of the followers, it means the subsequece leader thats going to 
+come out in the next term will also try to acquire a majority to get voted.
+
+this is called **overlapping majority**
+
+## Protocol Using Quorums
+
+- paxos
+- view stamped replication
+
+Raft come out at 2014
+
+
+## Raft Election
+
+in Raft, there will always be one and only one leader
+
+there will be an election timeout,
+once a follower missing heartbeat from leader, the follower will then start an election
+
+the follower will first increase the current term number, vote for himself and contact other followers to vote for him
+
+follower will reject new logs which has smaller term number
