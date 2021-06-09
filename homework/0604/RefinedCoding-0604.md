@@ -102,7 +102,7 @@ a prefix of its log	,	其日志的前缀
 depart from	,	离开  
 decision conflict	,	决策冲突  
 reorganize the data	,	重新组织数据  
-TODO 5.4.3 - 5.5  
+
   
   
   
