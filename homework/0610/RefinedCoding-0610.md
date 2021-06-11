@@ -1,61 +1,34 @@
-# 6.824 Raft FAQ
+# MapReduce Lab QA
 
-## Simplicity
-- log for persistency
-- follower reject AppendEntries out of date
-- with snapshot
+## 类似设计
+- 同步请求
+- 用休眠代替条件变量
+- 使用通道
 
-## Senarios
-- Docker
-- etcd
-- MongoDB
+## 设计终点
+- 协调器不能做太多工作
+- 不能发送冗余请求
+- 条件打印DPrintf in raft/utils.go
+- 颜色打印
+- 重定向到文件
 
-## Paxos
-- invented in the latest 1980s, early 1990s
-- no leader
-- make servers to agree on a single value
-- far simpler than Raft, solves less problems than Raft
-- replicate need to agree on an indefinite sequence of values
-- ViewStamped Replication in 1988
-- an agreement canbe started by any replica, how to guareetee its correctness
+## MapReduce问题
+- Combiner in Map
+- Sorting in Reduce
+- 中间文件为什么存在本地而不在GFS
+- 协调器如何退出，使用Exit任务
+- 失败任务为什么使用超时重试，而不是论文中的备份任务？
+- RPC调用使用指针而不是对象？RPC如何传输地址？
 
+## 实现RPC数据结构
 
-## Raft
-- invnted in 2012
+## 协调器的RPC处理
 
-## Others
-群友在做Lab1的时候有没有遇到Connection Refused的错误啊，我拉MIT的库啥东西没改也有这个问题，DDIA群主建议我们去做6.824 2020的作业
-嗯嗯，谢谢群友，还是群友学习仔细，Log里面是不是有term和index啊？term和index都要比较么？
+## Worker的循环去获取任务和处理返回
 
-## Terminology
-flavor
-needlessly
-tutorial
-provision
-pipelining
-mechanism
-in flight
-batching
-in return for
-sacrifice
-impression
-indefinite
-introductory
-in contrast
-efficiently
-complex
-introductory
-in contrast
-relatively
-fairly
-contribution
-inherently
-sacrifice
-resemble
-more or less
-derived
-satisfactory
-diverging
-mutate
+## 实现Map任务
 
+## 实现Reduce任务
+
+## 协调器循环去处理请求和分配任务
 
