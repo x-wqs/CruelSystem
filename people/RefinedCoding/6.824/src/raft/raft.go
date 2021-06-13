@@ -212,7 +212,7 @@ func (rf *Raft) RequestVote(request *VoteRequest, response *VoteResponse) {
 	} else if request.term > rf.term {
 		rf.term = request.term
 		rf.votee = request.candidate
-		rf.state = FOLLOWER
+		rf.updateState(FOLLOWER)
 	} else {
 		if rf.votee == -1 {
 			rf.votee = request.candidate
@@ -278,7 +278,7 @@ func (rf *Raft) broadcastVoteRequest() {
 					} else {
 						if response.term > rf.term {
 							rf.term = response.term
-							rf.state = FOLLOWER
+							rf.updateState(FOLLOWER)
 						}
 					}
 				} else {
@@ -300,7 +300,7 @@ func (rf *Raft) broadcastAppendEntries() {
 					defer rf.mu.Unlock()
 					if !response.success && response.term > rf.term {
 						rf.term = response.term
-						rf.state = FOLLOWER
+						rf.updateState(FOLLOWER)
 					}
 				}
 			}(i)
@@ -317,8 +317,43 @@ func (rf *Raft) AppendEntries(request *AppendEntriesRequest, response *AppendEnt
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
 
-	
+	if request.term < rf.term {
+		response.success = false
+		response.term = rf.term
+	} else if request.term > rf.term {
+		rf.term = request.term
+		rf.updateState(FOLLOWER)
+		response.success = true
+	} else {
+		response.success = true
+	}
+
+	go func() {
+		rf.appendCh <- struct{}{}
+	}()
 }
+
+func (rf *Raft) updateState(state State) {
+	if rf.state != state {
+		fmt.Printf("server: %d, term: %d, currentState: %d, newState: %d\n", rf.me, rf.term, rf.state, state)
+		rf.state = state
+		if state == FOLLOWER {
+			rf.votee = -1
+		} else if state == CANDIDATE {
+			rf.startElection()
+		}
+	}
+}
+
+func (rf *Raft) startElection() {
+	rf.term ++
+	rf.votee = rf.me
+	rf.voted = 1
+	rf.electionTimer.Reset(RandElectionTimeout())
+	rf.broadcastVoteRequest()
+}
+
+
 //
 // the service using Raft (e.g. a k/v server) wants to start
 // agreement on the next command to be appended to Raft's log. if this
