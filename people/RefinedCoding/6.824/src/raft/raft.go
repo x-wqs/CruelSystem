@@ -164,11 +164,11 @@ func (rf *Raft) Snapshot(index int, snapshot []byte) {
 //
 // example RequestVote RPC arguments structure.
 // field names must start with capital letters!
-//
+// Fix: labgob error: lower-case field Term of VoteRequest in RPC or persist/snapshot will break your Raft
 type VoteRequest struct {
 	// Your data here (2A, 2B).
-	term      int
-	candidate int
+	Term      int
+	Candidate int
 }
 
 //
@@ -177,19 +177,19 @@ type VoteRequest struct {
 //
 type VoteResponse struct {
 	// Your data here (2A).
-	term  int
-	voted bool
+	Term  int
+	Voted bool
 }
 
-// TODO-RF: from leader to follower ?
+// TODO-RF: from Leader to follower ?
 type AppendEntriesRequest struct {
-	term   int
-	leader int
+	Term   int
+	Leader int
 }
 
 type AppendEntriesResponse struct {
-	term    int
-	success bool
+	Term    int
+	Success bool
 }
 
 // TODO-learn: https://blog.csdn.net/Tommenx/article/details/78313435
@@ -202,24 +202,24 @@ func (rf *Raft) RequestVote(request *VoteRequest, response *VoteResponse) {
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
 
-	if request.term < rf.term {
-		response.voted = false // not vote source ? VoteRequest for source ? apply to be candidate ?
-		response.term = rf.term
-	} else if request.term > rf.term {
-		rf.term = request.term
-		rf.votee = request.candidate
+	if request.Term < rf.term {
+		response.Voted = false // not vote source ? VoteRequest for source ? apply to be Candidate ?
+		response.Term = rf.term
+	} else if request.Term > rf.term {
+		rf.term = request.Term
+		rf.votee = request.Candidate
 		rf.state = FOLLOWER
 		//rf.updateState(FOLLOWER)
 	} else {
 		if rf.votee == -1 {
-			rf.votee = request.candidate
-			response.voted = true
+			rf.votee = request.Candidate
+			response.Voted = true
 		} else {
-			response.voted = false
+			response.Voted = false
 		}
 	}
 
-	if response.voted {
+	if response.Voted {
 		go func() {
 			rf.voteCh <- struct{}{}
 		}()
@@ -261,20 +261,26 @@ func (rf *Raft) sendRequestVote(server int, request *VoteRequest, response *Vote
 }
 
 func (rf *Raft) broadcastVoteRequest() {
-	request := VoteRequest{term: rf.term, candidate: rf.me}
+	// Fix: WARNING: DATA RACE
+	// /mnt/d/code/CruelSystem/people/RefinedCoding/6.824/src/raft/raft.go:264 +0x5c
+	rf.mu.Lock()
+	request := VoteRequest{Term: rf.term, Candidate: rf.me}
+	state := rf.state			// Fix: WARNING: DATA RACE
+	rf.mu.Unlock()
+
 	for i, _ := range rf.peers {
 		if i != rf.me {
 			go func(peer int) {
 				var response VoteResponse
-				if rf.state == CANDIDATE && rf.sendRequestVote(peer, &request, &response) {
+				if state == CANDIDATE && rf.sendRequestVote(peer, &request, &response) {
 					rf.mu.Lock()
 					defer rf.mu.Unlock()
 
-					if response.voted {
+					if response.Voted {
 						rf.voted++
 					} else {
-						if response.term > rf.term {
-							rf.term = response.term
+						if response.Term > rf.term {
+							rf.term = response.Term
 							rf.state = FOLLOWER
 							rf.votee = -1
 							// rf.updateState(FOLLOWER)
@@ -289,7 +295,7 @@ func (rf *Raft) broadcastVoteRequest() {
 }
 
 func (rf *Raft) broadcastAppendEntries() {
-	request := AppendEntriesRequest{term: rf.term, leader: rf.me}
+	request := AppendEntriesRequest{Term: rf.term, Leader: rf.me}
 	for i, _ := range rf.peers {
 		if i != rf.me {
 			go func(peer int) {
@@ -297,8 +303,8 @@ func (rf *Raft) broadcastAppendEntries() {
 				if rf.state == LEADER && rf.sendAppendEntries(peer, &request, &response) {
 					rf.mu.Lock()
 					defer rf.mu.Unlock()
-					if !response.success && response.term > rf.term {
-						rf.term = response.term
+					if !response.Success && response.Term > rf.term {
+						rf.term = response.Term
 						rf.updateState(FOLLOWER)
 					}
 				}
@@ -316,15 +322,15 @@ func (rf *Raft) AppendEntries(request *AppendEntriesRequest, response *AppendEnt
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
 
-	if request.term < rf.term {
-		response.success = false
-		response.term = rf.term
-	} else if request.term > rf.term {
-		rf.term = request.term
+	if request.Term < rf.term {
+		response.Success = false
+		response.Term = rf.term
+	} else if request.Term > rf.term {
+		rf.term = request.Term
 		rf.updateState(FOLLOWER)
-		response.success = true
+		response.Success = true
 	} else {
-		response.success = true
+		response.Success = true
 	}
 
 	go func() {
@@ -333,8 +339,10 @@ func (rf *Raft) AppendEntries(request *AppendEntriesRequest, response *AppendEnt
 }
 
 func (rf *Raft) updateState(state State) {
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
 	if rf.state != state {
-		fmt.Printf("server: %d, term: %d, currentState: %d, newState: %d\n", rf.me, rf.term, rf.state, state)
+		fmt.Printf("server: %d, Term: %d, currentState: %d, newState: %d\n", rf.me, rf.term, rf.state, state)
 		rf.state = state
 		if state == FOLLOWER {
 			rf.votee = -1
@@ -345,9 +353,9 @@ func (rf *Raft) updateState(state State) {
 }
 
 //func (rf *Raft) startElection() {
-//	rf.term++
+//	rf.Term++
 //	rf.votee = rf.me
-//	rf.voted = 1
+//	rf.Voted = 1
 //	rf.electionTimer.Reset(rf.randElectionTimeout())
 //	rf.broadcastVoteRequest()
 //}
@@ -402,7 +410,7 @@ func (rf *Raft) killed() bool {
 func (rf *Raft) ticker() {
 	for rf.killed() == false {
 
-		// Your code here to check if a leader election should
+		// Your code here to check if a Leader election should
 		// be started and to randomize sleeping time using
 		// time.Sleep().
 		rf.mu.Lock()
@@ -415,7 +423,7 @@ func (rf *Raft) ticker() {
 			case <-rf.appendCh:
 			case <-rf.voteCh:
 			case <-time.After(rf.randElectionTimeout()):
-				rf.state = CANDIDATE // TODO: function with lock
+				rf.updateState(CANDIDATE)	// Fix: function with lock
 			}
 
 		case CANDIDATE:
@@ -430,13 +438,14 @@ func (rf *Raft) ticker() {
 			select {
 			case <-time.After(rf.randElectionTimeout()):
 			case <-rf.appendCh:
-				rf.state = FOLLOWER
+				rf.updateState(FOLLOWER)
 			case <-rf.voteCh: // TODO: wonElectionChain, grantVoteChain
-				rf.state = LEADER
+				rf.updateState(LEADER)
 			}
 
 		case LEADER:
-			rf.broadcastAppendEntries()
+			// TODO-Lab-2B
+			// rf.broadcastAppendEntries()
 			time.Sleep(HEARTBEAT_INTERVAL)
 		}
 	}
