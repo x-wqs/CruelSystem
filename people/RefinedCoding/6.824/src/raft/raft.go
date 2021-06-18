@@ -203,6 +203,7 @@ func (rf *Raft) RequestVote(request *VoteRequest, response *VoteResponse) {
 	// Your code here (2A, 2B).
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
+	//fmt.Printf("handleRequestVote: local: %d, remote: %d, r.term: %d\n", rf.me, request.Candidate, request.Term)
 
 	if request.Term < rf.term {
 		response.Voted = false // not vote source ? VoteRequest for source ? apply to be Candidate ?
@@ -211,6 +212,7 @@ func (rf *Raft) RequestVote(request *VoteRequest, response *VoteResponse) {
 		rf.term = request.Term
 		rf.votee = request.Candidate
 		rf.state = FOLLOWER
+		response.Voted = true
 		//rf.updateState(FOLLOWER)
 	} else {
 		if rf.votee == -1 {
@@ -258,8 +260,8 @@ func (rf *Raft) RequestVote(request *VoteRequest, response *VoteResponse) {
 // the struct itself.
 //
 func (rf *Raft) sendRequestVote(server int, request *VoteRequest, response *VoteResponse) bool {
-	ok := rf.peers[server].Call("Raft.RequestVote", request, response)
-	return ok
+	success := rf.peers[server].Call("Raft.RequestVote", request, response)
+	return success
 }
 
 func (rf *Raft) broadcastVoteRequest() {
