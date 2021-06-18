@@ -97,7 +97,9 @@ func (rf *Raft) GetState() (int, bool) {
 	var term int
 	var isLeader bool
 	// Your code here (2A).
-	// TODO-RF: add lock
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
+
 	term = rf.term
 	isLeader = rf.state == LEADER
 	return term, isLeader
