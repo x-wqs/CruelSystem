@@ -19,8 +19,7 @@ package raft
 
 import (
 	"fmt"
-	"net/rpc"
-
+	"math/rand"
 	//	"bytes"
 	"sync"
 	"sync/atomic"
@@ -28,7 +27,7 @@ import (
 
 	//"time"
 
-//	"6.824/labgob"
+	//	"6.824/labgob"
 	"6.824/labrpc"
 )
 
@@ -39,7 +38,7 @@ const (
 	CANDIDATE
 	LEADER
 
-	HEARTBEAT_INTERVAL = 100
+	HEARTBEAT_INTERVAL    = 100
 	ELECTION_INTERVAL_MIN = 400
 	ELECTION_INTERVAL_MAX = 500
 )
@@ -83,9 +82,9 @@ type Raft struct {
 	votee int
 	voted int
 	state State
-	term int
+	term  int
 
-	voteCh chan struct{}
+	voteCh   chan struct{}
 	appendCh chan struct{}
 
 	electionTimer *time.Timer
@@ -120,7 +119,6 @@ func (rf *Raft) persist() {
 	// rf.persister.SaveRaftState(data)
 }
 
-
 //
 // restore previously persisted state.
 //
@@ -143,7 +141,6 @@ func (rf *Raft) readPersist(data []byte) {
 	// }
 }
 
-
 //
 // A service wants to switch to snapshot.  Only do so if Raft hasn't
 // have more recent info since it communicate the snapshot on applyCh.
@@ -164,14 +161,13 @@ func (rf *Raft) Snapshot(index int, snapshot []byte) {
 
 }
 
-
 //
 // example RequestVote RPC arguments structure.
 // field names must start with capital letters!
 //
 type VoteRequest struct {
 	// Your data here (2A, 2B).
-	term int
+	term      int
 	candidate int
 }
 
@@ -181,18 +177,18 @@ type VoteRequest struct {
 //
 type VoteResponse struct {
 	// Your data here (2A).
-	term int
+	term  int
 	voted bool
 }
 
 // TODO-RF: from leader to follower ?
 type AppendEntriesRequest struct {
-	term int
+	term   int
 	leader int
 }
 
 type AppendEntriesResponse struct {
-	term int
+	term    int
 	success bool
 }
 
@@ -207,12 +203,13 @@ func (rf *Raft) RequestVote(request *VoteRequest, response *VoteResponse) {
 	defer rf.mu.Unlock()
 
 	if request.term < rf.term {
-		response.voted = false		// not vote source ? VoteRequest for source ? apply to be candidate ?
+		response.voted = false // not vote source ? VoteRequest for source ? apply to be candidate ?
 		response.term = rf.term
 	} else if request.term > rf.term {
 		rf.term = request.term
 		rf.votee = request.candidate
-		rf.updateState(FOLLOWER)
+		rf.state = FOLLOWER
+		//rf.updateState(FOLLOWER)
 	} else {
 		if rf.votee == -1 {
 			rf.votee = request.candidate
@@ -264,9 +261,9 @@ func (rf *Raft) sendRequestVote(server int, request *VoteRequest, response *Vote
 }
 
 func (rf *Raft) broadcastVoteRequest() {
-	request := VoteRequest{ term: rf.term, candidate: rf.me }
+	request := VoteRequest{term: rf.term, candidate: rf.me}
 	for i, _ := range rf.peers {
-		if i != me {
+		if i != rf.me {
 			go func(peer int) {
 				var response VoteResponse
 				if rf.state == CANDIDATE && rf.sendRequestVote(peer, &request, &response) {
@@ -274,11 +271,13 @@ func (rf *Raft) broadcastVoteRequest() {
 					defer rf.mu.Unlock()
 
 					if response.voted {
-						rf.voted ++
+						rf.voted++
 					} else {
 						if response.term > rf.term {
 							rf.term = response.term
-							rf.updateState(FOLLOWER)
+							rf.state = FOLLOWER
+							rf.votee = -1
+							// rf.updateState(FOLLOWER)
 						}
 					}
 				} else {
@@ -290,7 +289,7 @@ func (rf *Raft) broadcastVoteRequest() {
 }
 
 func (rf *Raft) broadcastAppendEntries() {
-	request := AppendEntriesRequest{ term: rf.term, leader: rf.me }
+	request := AppendEntriesRequest{term: rf.term, leader: rf.me}
 	for i, _ := range rf.peers {
 		if i != rf.me {
 			go func(peer int) {
@@ -339,20 +338,19 @@ func (rf *Raft) updateState(state State) {
 		rf.state = state
 		if state == FOLLOWER {
 			rf.votee = -1
-		} else if state == CANDIDATE {
-			rf.startElection()
+			//} else if state == CANDIDATE {
+			//	rf.startElection()
 		}
 	}
 }
 
-func (rf *Raft) startElection() {
-	rf.term ++
-	rf.votee = rf.me
-	rf.voted = 1
-	rf.electionTimer.Reset(RandElectionTimeout())
-	rf.broadcastVoteRequest()
-}
-
+//func (rf *Raft) startElection() {
+//	rf.term++
+//	rf.votee = rf.me
+//	rf.voted = 1
+//	rf.electionTimer.Reset(rf.randElectionTimeout())
+//	rf.broadcastVoteRequest()
+//}
 
 //
 // the service using Raft (e.g. a k/v server) wants to start
@@ -374,7 +372,6 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 	isLeader := true
 
 	// Your code here (2B).
-
 
 	return index, term, isLeader
 }
@@ -408,8 +405,46 @@ func (rf *Raft) ticker() {
 		// Your code here to check if a leader election should
 		// be started and to randomize sleeping time using
 		// time.Sleep().
+		rf.mu.Lock()
+		state := rf.state
+		rf.mu.Unlock()
 
+		switch state {
+		case FOLLOWER:
+			select {
+			case <-rf.appendCh:
+			case <-rf.voteCh:
+			case <-time.After(rf.randElectionTimeout()):
+				rf.state = CANDIDATE // TODO: function with lock
+			}
+
+		case CANDIDATE:
+			rf.mu.Lock()
+			rf.term++
+			rf.votee = rf.me
+			rf.voted = 1
+			rf.mu.Unlock()
+
+			go rf.broadcastVoteRequest()
+
+			select {
+			case <-time.After(rf.randElectionTimeout()):
+			case <-rf.appendCh:
+				rf.state = FOLLOWER
+			case <-rf.voteCh: // TODO: wonElectionChain, grantVoteChain
+				rf.state = LEADER
+			}
+
+		case LEADER:
+			rf.broadcastAppendEntries()
+			time.Sleep(HEARTBEAT_INTERVAL)
+		}
 	}
+}
+
+func (rf *Raft) randElectionTimeout() time.Duration {
+	rand.Seed(time.Now().UnixNano())
+	return time.Duration(ELECTION_INTERVAL_MIN + rand.Intn(ELECTION_INTERVAL_MAX-ELECTION_INTERVAL_MIN))
 }
 
 //
@@ -443,3 +478,24 @@ func Make(peers []*labrpc.ClientEnd, me int, persister *Persister, applyCh chan 
 
 	return rf
 }
+
+// election/leader ticker
+// https://github.com/JellyZhang/mit-6.824-2021/blob/master/src/raft/raft.go
+
+// leader loop
+// https://github.com/viktorxhzj/6.824/blob/master/src/raft/raft.go
+
+// start election
+// https://github.com/h1deOnBush/6.824-2021/blob/master/src/raft/raft.go
+
+// applier / ticker
+// https://github.com/crimson-gao/MIT-6.824-spring2021/blob/master/src/raft/raft.go
+
+// timeout watcher / log applier
+// https://github.com/MrGuin/6.824-labs-2021/blob/master/src/raft/raft.go
+
+// ticker / NotifyApplyCh
+// https://github.com/vnguyen12/6.824-Distributed-Systems/blob/main/src/raft/raft.go
+
+// Image Update
+// https://github.com/lzlaa/6.824/blob/master/raft/raft.go
