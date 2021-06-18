@@ -93,16 +93,10 @@ type Raft struct {
 // return currentTerm and whether this server
 // believes it is the leader.
 func (rf *Raft) GetState() (int, bool) {
-
-	var term int
-	var isLeader bool
 	// Your code here (2A).
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
-
-	term = rf.term
-	isLeader = rf.state == LEADER
-	return term, isLeader
+	return rf.term, rf.state == LEADER
 }
 
 //
@@ -211,7 +205,7 @@ func (rf *Raft) RequestVote(request *VoteRequest, response *VoteResponse) {
 	} else if request.Term > rf.term {
 		rf.term = request.Term
 		rf.votee = request.Candidate
-		rf.state = FOLLOWER
+		rf.updateState(FOLLOWER)
 		response.Voted = true
 		//rf.updateState(FOLLOWER)
 	} else {
