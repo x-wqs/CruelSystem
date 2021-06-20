@@ -20,7 +20,6 @@ package raft
 import (
 	"fmt"
 	"math/rand"
-	"text/template/parse"
 
 	//	"bytes"
 	"sync"
@@ -92,23 +91,43 @@ type Raft struct {
 	voted int
 	state State
 	term  int
+	electionTime	time.Time
 
 	voteCh   chan struct{}
 	appendCh chan struct{}
 
+	// TODO-clean
 	electionTimer *time.Timer
 
 	// 2B
 	// https://juejin.cn/post/6928375496229158926
 	logs		[]LogEntry
-	commitIndex	int
-	lastApply	int
+
+	// persistent state
+	log 		Log
+
 	moreApply	bool
 	applyCh		chan ApplyMsg
 	applyCond	*sync.Cond
 
+	// volatile state
+	commitIndex	int
+	lastApply	int
+
+	// leader state
 	nextIndex	[]int
 	matchIndex	[]int
+
+	// snapshot state
+	snapshot		[]byte
+	snapshotIndex	int
+	snapshotTerm	int
+
+	// temporary persistent
+	waitingSnapshot	[]byte
+	waitingIndex	int
+	waitingTerm		int
+
 }
 
 
@@ -223,7 +242,7 @@ type AppendEntriesResponse struct {
 	Success bool
 
 	// 2B
-	
+
 }
 
 // TODO-learn: https://blog.csdn.net/Tommenx/article/details/78313435
@@ -505,21 +524,36 @@ func (rf *Raft) randElectionTimeout() time.Duration {
 //
 func Make(peers []*labrpc.ClientEnd, me int, persister *Persister, applyCh chan ApplyMsg) *Raft {
 	rf := &Raft{}
+	rf.mu = sync.Mutex{}
 	rf.peers = peers
 	rf.persister = persister
 	rf.me = me
 
-	// Your initialization code here (2A, 2B, 2C).
+	// 2A
 	rf.state = FOLLOWER
+	rf.term = 0
 	rf.votee = -1
 	rf.voteCh = make(chan struct{})
 	rf.appendCh = make(chan struct{})
+
+	// 2B
+	rf.commitIndex = -1
+	rf.lastApply = -1
+	rf.logs = make([]LogEntry, 0)
+
+	rf.moreApply = false;
+	rf.applyCh = applyCh
+	rf.applyCond = sync.NewCond(&rf.mu)
+
+	// 2C
 
 	// initialize from state persisted before a crash
 	rf.readPersist(persister.ReadRaftState())
 
 	// start ticker goroutine to start elections
 	go rf.ticker()
+
+	go rf.appendMsgTicker()
 
 	return rf
 }
