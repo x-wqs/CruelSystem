@@ -127,10 +127,7 @@ type Raft struct {
 	waitingSnapshot	[]byte
 	waitingIndex	int
 	waitingTerm		int
-
 }
-
-
 
 // return currentTerm and whether this server
 // believes it is the leader.
@@ -523,8 +520,7 @@ func (rf *Raft) randElectionTimeout() time.Duration {
 // for any long-running work.
 //
 func Make(peers []*labrpc.ClientEnd, me int, persister *Persister, applyCh chan ApplyMsg) *Raft {
-	rf := &Raft{}
-	rf.mu = sync.Mutex{}
+	rf := &Raft{} 			// rf.mu = sync.Mutex{}
 	rf.peers = peers
 	rf.persister = persister
 	rf.me = me
@@ -533,17 +529,21 @@ func Make(peers []*labrpc.ClientEnd, me int, persister *Persister, applyCh chan 
 	rf.state = FOLLOWER
 	rf.term = 0
 	rf.votee = -1
-	rf.voteCh = make(chan struct{})
-	rf.appendCh = make(chan struct{})
+	rf.setElectionTime()
+	//rf.voteCh = make(chan struct{})
+	//rf.appendCh = make(chan struct{})
 
 	// 2B
 	rf.commitIndex = -1
 	rf.lastApply = -1
 	rf.logs = make([]LogEntry, 0)
 
-	rf.moreApply = false;
 	rf.applyCh = applyCh
 	rf.applyCond = sync.NewCond(&rf.mu)
+	rf.moreApply = false;
+
+	rf.nextIndex = make([]int, len(rf.peers))
+	rf.matchIndex = make([]int, len(rf.peers))
 
 	// 2C
 
@@ -551,9 +551,8 @@ func Make(peers []*labrpc.ClientEnd, me int, persister *Persister, applyCh chan 
 	rf.readPersist(persister.ReadRaftState())
 
 	// start ticker goroutine to start elections
+	go rf.applier()
 	go rf.ticker()
-
-	go rf.appendMsgTicker()
 
 	return rf
 }
