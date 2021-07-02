@@ -9,6 +9,13 @@
 ## 实现
 - 在现实视线中，Raft的持久化状态每次在改变的时候都会写入磁盘
 - 然后重启的时候，会从磁盘读出
-- 
+- 在本实验中，无需使用磁盘
+- Raft会从持久化类直接读入，估计持久化类Persister.go已经实现好了
+- 接口有Persister类的ReadRaftState()和SaveRaftState()
+
+## 要求
+- 实现Raft类的persist()和readPersist()
+- 还要编码序列化Raft的状态，使用labgob编码器
+- Labgob编码器类和Go的Gob编码器类似
 
 
