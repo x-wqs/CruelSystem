@@ -1,8 +1,6 @@
 package raft
 
-// cnblogs.com/mignet/p/6824_Lab_2_Raft_2C.html
-// cp people/RefinedCoding/6.824/src/raft/raft.go homework/0703/RefinedCoding-raft.go
-
+// 
 //
 // this is an outline of the API that raft must expose to
 // the service (or tester). see comments below for
