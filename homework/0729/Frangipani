@@ -1,0 +1,75 @@
+Lecture 12: Cache Consistency: Frangipani (a paper in 1997)
+Petal consists of a collection of network connected servers that cooperatively manage a pool of physical disks. 
+To a Petal client, this collection appears as a highly available block-level storage system that provides large abstract containers called virtual disks.
+
+Application: Network File Systems (NFS):
+Focus:
+Cache Coherence:
+distributed locking
+distributed crash recovery
+
+Traditional NFS 
+VS Frangipani design (clients run the file server itself):
+
+Use case:
+researchers
+coupling
+editing
+programs
+docs
+potential sharing files/dirs
+user-to-user
+same user logs into multiple machines
+
+====> design choices
+caching (write back)
+strong coherency
+performance
+
+====> challenges
+
+Cache consistency:
+lock server:
+Rule: cache file, first acquire lock 
+
+Protocol:
+locking: request, grant, revoke, release
+read file from paddle
+
+Atomicity: (using locks)
+create a file: 
+acquire a lock for file:
+allocate a i-node, write a node, update tree
+release file lock, change status from busy to idle
+
+Crash recovery: write-ahead logging
+first log to update
+install updating
+
+Log record:
+
+sequence numbers: array of updates, includes block number, version number, new bytes.
+creating of file: 2 entries. one describe the anode block. one describing update in the data block
+
+Revoke:
+force log to petal
+send updated blocks to petal
+release the lock
+
+Crash:
+-before writing log ==>lost
+-crashing after writing log to Petal
+  lease expires: (network partition)
+  daemon recovery
+-crashing during writing to log to Petal
+  prefix in the log
+
+Many logs:
+work station 1:
+delete a log
+work station 2:
+create a file
+work station 3:
+recovery daemon
+runs for work station 1
+will recovery replay log?
