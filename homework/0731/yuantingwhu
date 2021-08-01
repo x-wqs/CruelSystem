@@ -1,0 +1,39 @@
+# Dynamo: Amazon's Highly Available Key-value Store
+https://arthurchiao.art/blog/amazon-dynamo-zh/
+
+# Dynamo: highly available key-value store, currently named DynamoDB
+Dynamo VS Redis
+Targeted to be always writable VS for easily lost data
+disk VS memory
+distributed storage system VS single work station
+performance
+
+# Background:
+challenges for a massive e-commerce system: reliability at massive scale
+Dynamo: a decentralized system
+
+## 2.1 System requirements assumptions: 
+Assumptions:
+query model
+use the only key to read and write.
+any operation will not need multiple data items
+for relative small file (less than 1MB)
+
+   ACID（Atomicity, Consistency, Isolation, Durability
+permit only single key updates
+
+   Efficiency
+
+2.2 SLA (service Level Agreement)
+2.3 Design 
+eventually consistent data store
+always writable, last write wins
+incremental scalability
+symmetry
+decentralization
+heterogeneity
+
+3. 
+3.1 Peer to Peer systems
+3.2 distributed file system and database
+typical distributed file systems supports hierarchical namespace##
