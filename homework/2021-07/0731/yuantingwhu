@@ -33,7 +33,48 @@ symmetry
 decentralization
 heterogeneity
 
-3. 
+3. Relevant work
 3.1 Peer to Peer systems
 3.2 distributed file system and database
-typical distributed file systems supports hierarchical namespace##
+typical distributed file systems supports hierarchical namespace
+3.3 discussion
+Dynamo is different from the centralized storage system
+Dynamo is always writable
+Dynamo is build on facilities that are trusted and single management.
+There is not needs for hierarchical namespace and complex relationship schema.
+Dynamo is latency sensitive application.
+4. system architect
+Key distributed system’s key technologies
+partitioning（分区，经哈希决定将数据存储到哪个/些节点）
+复制（replication）
+版本化（versioning）
+成员管理（membership）
+故障处理（failure handling）
+规模扩展（scaling）
+4.1 system interface
+get
+put
+
+4.2 partition algorithm
+based on consistent hash:
+Instead of mapping a node to a single point in the circle, each node gets assigned to multiple points in the ring.
+virtual node
+
+4.3 replication
+4.4 data versioning
+version conflicts:
+Dynamo treats the result of each modification as a new and immutable version of data
+
+4.5 get and put execution
+4.6 hinted handoff
+sloppy quorum: 
+4.7 permanent handoff
+To handle this and other threats to durability, Dynamo implements an anti-entropy (replica synchronization) protocol to keep the replicas synchronized.
+4.8 membership management and malfunction check
+4.9 add and remove nodes
+
+5. Implementation
+6. Test results and dicusion
+6.1. Balance between performance and durability
+SLA: write and read operations can be done in 300ms for P99.9
+6.2 uniform load distribution
