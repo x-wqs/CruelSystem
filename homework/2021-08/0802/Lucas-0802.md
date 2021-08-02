@@ -6,6 +6,12 @@
 - https://ocw.mit.edu/resources/res-6-004-principles-of-computer-system-design-an-introduction-spring-2009/online-textbook/atomicity_open_5_0.pdf
 
 ## 9.1 原子性
+| 领域     | 序列原子性       | 协同原子性         |
+|----------|------------------|--------------------|
+| 数据库   | 更新多个数据记录 | 多线程更新共享数据 |
+| 硬件架构 | 处理中断和异常   | 注册重命名         |
+| 操作系统 | 管理程序接口     | 打印机队列         |
+| 软件工程 | 应用层容错       | 有界缓存           |
 
 ### 9.1.1 数据库的原子性 All or Nothing
 
