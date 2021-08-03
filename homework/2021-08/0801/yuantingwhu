@@ -1,0 +1,24 @@
+Spanner: Google’s Globally-Distributed Database
+
+https://mrcroxx.github.io/posts/paper-reading/spanner-osdi2012/
+Spanner: Google的可伸缩（scalable）、多版本（multi-version）、全球化分布式（globally-distributed）、同步多副本（synchronously-replicated）数据库。 将数据粉片到分部在世界多个数据中心中的跨多个Paxos状态就集合上的数据库。
+1. 实现：
+关键特性：TrueTime
+spanserver软件栈：
+在最底层，每个spanserver负责100到1000个被称为tablet的数据结构实例。每个tablet都类似于Bigtable的tablet抽象，其实现了一系列的映射。
+Spannner为数据分配时间戳。
+为了支持副本，每个spanserver在每个tablet上实现了一个Paxos状态机。
+在每个spanserver的每个leader副本中，都实现了一个lock table来实现并发控制。还实现了一个transaction manager来提供分布式事务支持。
+directory与放置
+directory是数据放置（placement）的单位。在同一个directory的所有数据都有相同的副本配置。
+数据模型
+Spanner为应用程序暴露了如下的一系列数据特性：数据模型基于模型化的（schematized）半关系型表、一种查询语言、和通用的事务。
+2. TrueTime
+TrueTime显式的将时间表示为，是一个有时间不确定度界限的时间范围。TrueTime在底层使用的参考时间为GPS和原子时钟。
+TrueTime通过每个数据中心的time server机器集合和每个机器的timeslave daemon的实现。
+3. 并发控制
+3.1 时间戳管理
+Spanner的实现支持读写事务（read-write transaction）、只读事务（read-only transaction）（即预先声明了的快照隔离事务，(predeclared snapshot-isolation transactions））、和快照读取（snapshot read）
+3.2 细节分析
+4. 总结
+Spanner结合并扩展了两个研究领域的观点：在更接近的数据库领域，需要易用的半结构化接口、事务、和基于SQL的查询语言；在系统领域，需要可伸缩、自动分片、容错、一致性副本、外部一致性、和广域分布。
