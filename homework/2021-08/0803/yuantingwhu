@@ -1,0 +1,8 @@
+Chapter 9 Atomicity: All-or-Nothing and Before-or-After 
+
+all-or-nothing atomicity: a design strategy for masking failures that occur while interpreting programs. 
+before-or-after atomicity: a design strategy for coordinating concurrent activities.
+
+Atomicity is the performing of a sequence of steps, called actions, so that they appear to be done as a single, indivisible step, known in operating system and architecture literature as an atomic action and in database management literature as a transaction. 
+
+sweeping simplification in the description of the possible states of a system: provides the basis for a methodical approach to recovery from failures and coordination of concurrent activities that simplifies design, simplifies understanding for later maintainers, and simplifies verification of correctness. 
