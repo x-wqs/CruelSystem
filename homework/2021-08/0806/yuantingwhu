@@ -1,0 +1,17 @@
+9.1 Atomicity 
+Atomicity is a property required in several different areas of computer system design. 
+
+
+9.1.1 All-or-Nothing Atomicity in a Database 
+Example: consider a database of bank accounts. Define a procedure named TRANSFER that debits one account and credits a second account, both of which are stored on disk. This should be done as an all-or-nothing atomic action.
+
+9.1.2 All-or-Nothing Atomicity in the Interrupt Interface 
+Example: in the processor instruction set interface as seen by a thread. 
+Thread: a thread normally performs actions one after another, as directed by the instructions of the current program, but that certain events may catch the attention of the thread’s interpreter, causing the interpreter, rather than the program, to supply the next instruction. 
+
+9.1.3 All-or-Nothing Atomicity in a Layered Application 
+All-or-nothing atomicity definition:
+A sequence of steps is an all-or-nothing action if, from the point of view of its invoker, the sequence always either 
+• completes, or 
+• aborts in such a way that it appears that the sequence had never been undertaken in the first place. That is, it backs out. 
+In a layered application, the idea is to design each of the actions of each layer to be all-or-nothing. 
