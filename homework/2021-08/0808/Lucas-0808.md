@@ -21,6 +21,11 @@
 - 在事务结束之后释放锁
 
 ### 9.5.3 两阶段锁 Two-Phase Locking
+- The primary constraint is that the transaction may not release any locks until it passes its lock point. 
+- Further, the transaction can release a lock on an object that it only reads any time after it reaches its lock point if it will never need to read that object again, even to abort.
+- MyISAM 不支持行锁，影响业务并发度，因为被 InnoDB 替换了。
+- 两阶段锁协议，加锁阶段 和 解锁阶段，用于单机事务中的一致性和隔离性。
+
 
 
 
