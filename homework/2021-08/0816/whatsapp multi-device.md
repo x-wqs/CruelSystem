@@ -1,3 +1,5 @@
+article: https://github.com/refinedcoding/CruelSystem/blob/main/homework/2021-08/0816/whatsapp%20multi-device.md
+
 situation:   phone is the source of truth for all user data and the only device capable of end-to-end encrypting messages for another user, initiating calls, etc. Companion devices maintain a persistent secure connection with the phone and simply mirror its contents on their own UI.
 
 tradeoff:
