@@ -1,0 +1,17 @@
+article link: https://engineering.fb.com/2020/04/21/data-infrastructure/turbine/
+
+situation:
+Turbine is trying fix the gap between current general purpose cluster management frameworks and the stream processing requirement.
+Turbine is a fast and scalable task scheduler, predictive autoscaler, 
+
+challenge:
+manage in loosely coupled microservices 
+where to run (task management)
+how to run (resource management)
+maintaining the strict SLOs
+
+action:
+1 two level placement: place shard into container, then place stream processing task onto each shards. dynamically load balance
+2 autoscale: estimate the resource needed, calculate estimated resource per task, iteratively adjust based on historical data
+3 application update mechanism: ensure updates sending from multiple actors (provisioner service, autoscaler, human operator) are  isolated and consistent and performed correctly. Utilized a hierarchical job configuration structure and merges updates.
+
