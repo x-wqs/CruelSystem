@@ -1,0 +1,79 @@
+Design Youtube
+
+Functional Requirement:
+- upload
+- view 
+- share
+- like/dislike
+- comments
+- search
+- recommend
+
+Non-functional Requirement
+- consistency
+- availability
+- fault tolerance
+
+Capacity Estimation
+- 2B users, 150M DAU
+- 20M users create 1 video/w
+- 150M * 3600s / d
+- 10 m * 1080p H264
+- 2k * 1k * 3 * 30FPS / 250
+- 0.8 MBps ~= 4 Mbps
+
+Storage Estimation
+- 2B / 100 / 7 / 24 / 3600
+- 2K / 60 ~= 35 videos / s
+- 1MB * 10m * 60s * 20M / 7
+   ~= 2PB / d *9 = 18PB / d
+- redundancy/avaiability
+
+Bandwidth
+- 33 v *10 * 60 *5 Mbps = 100Gbps
+- upload vs download
+- 150M * 60 / 24 / 60 * 4 Mbps
+- 25 Tbps / 100G = 250 : 1
+
+System API
+- upload(token, title, desc, content)
+- watch(token, vid, offset, codec, 720p)
+
+Database
+- users(id, name, email)
+- videos(id, uid, title, desc, url, likes)
+- comments(id, uid, vid, content)
+
+Storage 
+- SQL, NoSQL, HDFS/S3
+
+Video Processing Service
+- breakdown video to chunks
+- decode & encode
+- create thumbnails and preview
+- video understanding (ML)
+- all parallelized
+
+CDN
+- geographically distributed
+- hot videos near users
+
+Performance
+- scalability
+- load balance
+- replication
+- latency: caching / CDN
+- shard by vid & consistent hash
+- Pros: avoid hot user
+- Cons: hot video
+
+Enhancement
+- telemetry
+- security
+- logs
+
+
+
+
+
+
