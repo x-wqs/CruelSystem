@@ -1,0 +1,10 @@
+5 介绍了所有服务器需要遵守的规则，followers和leader和candidate需要遵守的规则
+一些有意思的细节：
+  1 candidate自己要给自己投票
+  2 作为任何人，怎么知道有新的leader已经被选出来了？自己有一个currentTerm，如果别的领导者发的RPC的term大于自己的term，我就是个过期领导了/我应该去跟随一个新的领导了
+5.1 基础
+1 raft操作有哪两种RPC：1 requestVote用于选举；2 appendEntries用于复制log
+5.2 领导人选举
+1 收到超过大多数选票则为胜。Q：候选人如何知道总共有多少台机器？
+2 等选票时收到超过自己的term的appendEntries则服从，变成follower
+3 选票被分散的问题怎么解决？每个候选人每次候选都有个随机的选举时间ddl
