@@ -1,0 +1,20 @@
+https://zhuanlan.zhihu.com/p/130332285#
+
+Q：为什么需要一致性？
+A：avoid single point failure
+
+Q：强一致性vs弱一致性
+A：强一致性是系统在每时每刻都在保持一致，弱一致性不需要过程中每时每刻保持一致，只是每个机器的最终状态一致就行
+
+Q：比较出名的强一致性算法实现
+A：google chubby, zookeeper(chubby 开源实现)
+
+basic paxos: 解决单决策问题
+multi paxos: 解决多决策问题
+潜在问题：活锁，难以理解，难以实现
+
+raft：解决多决策问题
+
+ZAB：与raft相似，区别：复制log过程中follower向leader发送心跳
+
+gossip：类似bfs，但为什么能保证一致性呢？好像也没什么人用。。
