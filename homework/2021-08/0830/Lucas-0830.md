@@ -7,4 +7,4 @@
 ## High Level Design
 - MicroService ----> Kafka ---> Job Scheduler Service ----> DB Cluster ----> Job Executor  -----> Kafka  ----> Job Result Service
 - MicroService schedules a one-time/recuring job, and put request in Kafka
--                                                         
+- RDBMS with ACID, sharding to distribute load, 
