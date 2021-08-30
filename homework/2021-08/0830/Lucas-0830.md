@@ -22,7 +22,34 @@
 - TODO: At least one follower hold up-to-date data
 
 ## Job Executor Service
-- 
+- TODO: read database partition info from ZooKeeper
+- Job executor will choose a database partition with fewest job executors
+- update database partition back in ZK
+- send heartbeats to ZooKeeper
+- pull jobs from the database partition, and update running status and start time for the job row
+- if the node fails, other node will detect and get jobs of failed node
+- after job executed, it will send job result successful/failed to Kafka
+- TODO: broadcast failed node status to all of nodes
+
+## Job Result Service
+- store job result in no-sql database
+- high write thoughput, TODO-leaderless
+- replicates asynchronously, eventual consistency
+
+## Coordinator / ZooKeeper
+- store info about above nodes
+
+## Message Queue / Kafka
+- scale producer / consumer independently
+- decouple producer and consumer
+- lower latency for the producer
+- durability and reliability for consumer
+- control traffic throttle / limit
+- message ordering
+
+## TODO
+- unreliable clock, multiple NTP servers?
+- exactly once delivery
 
 
 
