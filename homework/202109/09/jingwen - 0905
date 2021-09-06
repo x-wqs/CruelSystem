@@ -18,3 +18,14 @@ A：用raft实现，具体实现是用raft复制数据到多台机器。raft同�
 Q：rocksDB如何实现水平扩展：
 A：把key value空间切成一个个region，每个region都用startKey到EndKey来描述
 每个机器上放一些region，raft的复制和成员管理也是以region为单位。
+
+Q：多版本管理怎么搞？
+A：用MVCC，在key后面append一个version number，key排序按从大key-version（最新的）排到小key-version（最老的）
+    Key1-Version3 -> Value
+    Key1-Version2 -> Value
+    Key1-Version1 -> Value
+    ……
+    Key2-Version4 -> Value
+    Key2-Version3 -> Value
+    Key2-Version2 -> Value
+    Key2-Version1 -> Value
