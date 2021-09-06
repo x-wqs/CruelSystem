@@ -1,0 +1,20 @@
+https://pingcap.com/zh/blog/tidb-internal-1
+
+Q：作为普通程序员为什么要了解分布式数据库？
+A：对构建自己项目的系统有帮助，也可以利用好数据库
+
+Q：单机数据库的开源项目
+A：mySQL和Postgres
+
+Q：key value存储跟SQL数据库的table有关系吗
+A：没有关系，一定要忘记sql里面的概念
+
+Q：rocksDB是什么
+A：单机存储引擎，相当于单机的key value map
+
+Q：如何实现数据的容灾？
+A：用raft实现，具体实现是用raft复制数据到多台机器。raft同时承担数据写入接口，通过raft再写入rocks数据库。
+
+Q：rocksDB如何实现水平扩展：
+A：把key value空间切成一个个region，每个region都用startKey到EndKey来描述
+每个机器上放一些region，raft的复制和成员管理也是以region为单位。
