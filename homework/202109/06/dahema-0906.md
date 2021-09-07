@@ -30,6 +30,44 @@
 -  使用 select 为 Go routine 处理多个通道
 -  缓冲通道： 在缓冲区满之前接受方不会收到任何消息
 
+'''
+// Select example
+package main
+
+import (
+ "fmt"
+ "time"
+)
+
+func main() {
+ c1 := make(chan string)
+ c2 := make(chan string)
+ go speed1(c1)
+ go speed2(c2)
+ fmt.Println("The first to arrive is:")
+ select {
+ case s1 := <-c1:
+  fmt.Println(s1)
+ case s2 := <-c2:
+  fmt.Println(s2)
+ }
+}
+
+func speed1(ch chan string) {
+ time.Sleep(2 * time.Second)
+ ch <- "speed 1"
+}
+
+func speed2(ch chan string) {
+ time.Sleep(1 * time.Second)
+ ch <- "speed 2"
+}
+
+————————————————
+原文作者：Summer
+转自链接：https://learnku.com/go/t/24715
+版权声明：著作权归作者所有。商业转载请联系作者获得授权，非商业转载请保留以上作者信息和原文链接。
+'''
 
 ## 总结
 - 变量，数据类型
