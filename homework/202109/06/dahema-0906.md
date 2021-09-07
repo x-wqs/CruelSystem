@@ -30,7 +30,7 @@
 -  使用 select 为 Go routine 处理多个通道
 -  缓冲通道： 在缓冲区满之前接受方不会收到任何消息
 
-'''
+```
 // Select example
 package main
 
@@ -62,7 +62,7 @@ func speed2(ch chan string) {
  time.Sleep(1 * time.Second)
  ch <- "speed 2"
 }
-'''
+```
 
 ## 总结
 - 变量，数据类型
