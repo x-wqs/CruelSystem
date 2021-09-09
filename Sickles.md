@@ -7,6 +7,7 @@
 - Ivan
 - petitepiggy
 - YanJF_
+- Pika
 
 ## Left
 - Summer
