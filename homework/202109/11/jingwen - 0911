@@ -1,0 +1,41 @@
+Alex Xu 第一章 1/5
+#### 一个服务器
+
+不包含数据库服务器，只有一个服务器承接所有的http请求（api），返回json格式的结果和html网页内容。
+
+
+
+#### 一个服务器加一个数据库服务器
+
+用户的客户端发送http请求，通过服务器解析转发给数据库服务器。
+
+
+
+##### 数据库的选择
+
+可以选择两种数据库：noSQL数据库或者SQL数据库
+
+sql数据库 最大特点：储存在table和row里，可以用join进行跨表查询，
+
+Nosql数据库：
+
+例子：cassandra，hbase，Amazon dynamoDB，neo4j
+
+四种：key value store, graph store, column store, document store
+
+一般不能用join操作
+
+
+
+#### 选择nosql的理由：
+
+1 application需要很低的延迟。
+
+2 数据是没有结构
+
+3 数据之间没有关联
+
+4 只需要serialize或者deserialize数据（JSON）
+
+5 需要存储大量数据
+
