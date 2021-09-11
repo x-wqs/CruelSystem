@@ -200,8 +200,8 @@ func partitioner(t *testing.T, cfg *config, ch chan bool, done *int32) {
 // particular key.  If unreliable is set, RPCs may fail.  If crash is set, the
 // servers crash after the period is over and restart.  If partitions is set,
 // the test repartitions the network concurrently with the clients and servers. If
-// maxraftstate is a positive number, the size of the state for Raft (i.e., log
-// size) shouldn't exceed 8*maxraftstate. If maxraftstate is negative,
+// maxRaftState is a positive number, the size of the state for Raft (i.e., log
+// size) shouldn't exceed 8*maxRaftState. If maxRaftState is negative,
 // snapshots shouldn't be used.
 func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliable bool, crash bool, partitions bool, maxraftstate int, randomkeys bool) {
 
@@ -355,7 +355,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
 			// Check that snapshots are not used
 			ssz := cfg.SnapshotSize()
 			if ssz > 0 {
-				t.Fatalf("snapshot too large (%v), should not be used when maxraftstate = %d", ssz, maxraftstate)
+				t.Fatalf("snapshot too large (%v), should not be used when maxRaftState = %d", ssz, maxraftstate)
 			}
 		}
 	}

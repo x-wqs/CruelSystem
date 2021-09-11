@@ -1,0 +1,106 @@
+diff --git a/people/RefinedCoding/6.824/src/kvraft/common.go b/people/RefinedCoding/6.824/src/kvraft/common.go
+index e5ee442..b436f94 100644
+--- a/people/RefinedCoding/6.824/src/kvraft/common.go
++++ b/people/RefinedCoding/6.824/src/kvraft/common.go
+@@ -16,18 +16,24 @@ type PutAppendArgs struct {
+ 	// You'll have to add definitions here.
+ 	// Field names must start with capital letters,
+ 	// otherwise RPC will break.
++	ClientID	int64
++	RequestID	int
+ }
+ 
+ type PutAppendReply struct {
+ 	Err Err
++	WrongLeader bool
+ }
+ 
+ type GetArgs struct {
+ 	Key string
+ 	// You'll have to add definitions here.
++	ClientID	int64
++	RequestID	int
+ }
+ 
+ type GetReply struct {
+ 	Err   Err
+ 	Value string
++	WrongLeader	bool
+ }
+diff --git a/people/RefinedCoding/6.824/src/kvraft/server.go b/people/RefinedCoding/6.824/src/kvraft/server.go
+index 01f12c6..e11eed0 100644
+--- a/people/RefinedCoding/6.824/src/kvraft/server.go
++++ b/people/RefinedCoding/6.824/src/kvraft/server.go
+@@ -32,9 +32,15 @@ type KVServer struct {
+ 	applyCh chan raft.ApplyMsg
+ 	dead    int32 // set by Kill()
+ 
+-	maxraftstate int // snapshot if log grows this big
++	maxRaftState 	int // snapshot if log grows this big
++	lastApplied		int
+ 
+ 	// Your definitions here.
++	persister 	*raft.Persister
++	nextSeq 	map[int64]int
++	kvMap		map[string]string
++	logger		logger.TopicLogger
++	replyChan	map[int]chan bool
+ }
+ 
+ 
+@@ -42,9 +48,20 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
+ 	// Your code here.
+ }
+ 
++// https://www.cnblogs.com/mignet/p/6824_Lab_3_KVRaft_3A.html
++// https://github.com/crimson-gao/MIT-6.824-spring2021/blob/master/src/kvraft/server_rpc.go
+ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
+ 	// Your code here.
++	op := Op {
++		Key:		args.Key,
++		Value:		args.Value,
++		Name:		args.Op,
++		ClientId:	args.ClientID,
++		RequestId:	args.RequestID
++	}
++	kv.
+ }
++// https://github.com/skyitachi/MIT6.824/blob/1285462675d61cc93fc6b7dd9decb1823f34c146/src/kvraft/server.go#L70
+ 
+ //
+ // the tester calls Kill() when a KVServer instance won't
+@@ -75,8 +92,8 @@ func (kv *KVServer) killed() bool {
+ // the k/v server should store snapshots through the underlying Raft
+ // implementation, which should call persister.SaveStateAndSnapshot() to
+ // atomically save the Raft state along with the snapshot.
+-// the k/v server should snapshot when Raft's saved state exceeds maxraftstate bytes,
+-// in order to allow Raft to garbage-collect its log. if maxraftstate is -1,
++// the k/v server should snapshot when Raft's saved state exceeds maxRaftState bytes,
++// in order to allow Raft to garbage-collect its log. if maxRaftState is -1,
+ // you don't need to snapshot.
+ // StartKVServer() must return quickly, so it should start goroutines
+ // for any long-running work.
+diff --git a/people/RefinedCoding/6.824/src/kvraft/test_test.go b/people/RefinedCoding/6.824/src/kvraft/test_test.go
+index 162eb7e..9eef70d 100644
+--- a/people/RefinedCoding/6.824/src/kvraft/test_test.go
++++ b/people/RefinedCoding/6.824/src/kvraft/test_test.go
+@@ -200,8 +200,8 @@ func partitioner(t *testing.T, cfg *config, ch chan bool, done *int32) {
+ // particular key.  If unreliable is set, RPCs may fail.  If crash is set, the
+ // servers crash after the period is over and restart.  If partitions is set,
+ // the test repartitions the network concurrently with the clients and servers. If
+-// maxraftstate is a positive number, the size of the state for Raft (i.e., log
+-// size) shouldn't exceed 8*maxraftstate. If maxraftstate is negative,
++// maxRaftState is a positive number, the size of the state for Raft (i.e., log
++// size) shouldn't exceed 8*maxRaftState. If maxRaftState is negative,
+ // snapshots shouldn't be used.
+ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliable bool, crash bool, partitions bool, maxraftstate int, randomkeys bool) {
+ 
+@@ -355,7 +355,7 @@ func GenericTest(t *testing.T, part string, nclients int, nservers int, unreliab
+ 			// Check that snapshots are not used
+ 			ssz := cfg.SnapshotSize()
+ 			if ssz > 0 {
+-				t.Fatalf("snapshot too large (%v), should not be used when maxraftstate = %d", ssz, maxraftstate)
++				t.Fatalf("snapshot too large (%v), should not be used when maxRaftState = %d", ssz, maxraftstate)
+ 			}
+ 		}
+ 	}

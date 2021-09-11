@@ -32,9 +32,15 @@ type KVServer struct {
 	applyCh chan raft.ApplyMsg
 	dead    int32 // set by Kill()
 
-	maxraftstate int // snapshot if log grows this big
+	maxRaftState 	int // snapshot if log grows this big
+	lastApplied		int
 
 	// Your definitions here.
+	persister 	*raft.Persister
+	nextSeq 	map[int64]int
+	kvMap		map[string]string
+	logger		logger.TopicLogger
+	replyChan	map[int]chan bool
 }
 
 
@@ -42,9 +48,20 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 	// Your code here.
 }
 
+// https://www.cnblogs.com/mignet/p/6824_Lab_3_KVRaft_3A.html
+// https://github.com/crimson-gao/MIT-6.824-spring2021/blob/master/src/kvraft/server_rpc.go
 func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 	// Your code here.
+	op := Op {
+		Key:		args.Key,
+		Value:		args.Value,
+		Name:		args.Op,
+		ClientId:	args.ClientID,
+		RequestId:	args.RequestID
+	}
+	kv.
 }
+// https://github.com/skyitachi/MIT6.824/blob/1285462675d61cc93fc6b7dd9decb1823f34c146/src/kvraft/server.go#L70
 
 //
 // the tester calls Kill() when a KVServer instance won't
@@ -75,8 +92,8 @@ func (kv *KVServer) killed() bool {
 // the k/v server should store snapshots through the underlying Raft
 // implementation, which should call persister.SaveStateAndSnapshot() to
 // atomically save the Raft state along with the snapshot.
-// the k/v server should snapshot when Raft's saved state exceeds maxraftstate bytes,
-// in order to allow Raft to garbage-collect its log. if maxraftstate is -1,
+// the k/v server should snapshot when Raft's saved state exceeds maxRaftState bytes,
+// in order to allow Raft to garbage-collect its log. if maxRaftState is -1,
 // you don't need to snapshot.
 // StartKVServer() must return quickly, so it should start goroutines
 // for any long-running work.
