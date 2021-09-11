@@ -56,3 +56,15 @@
 - LB benefits
   - faster response as doing the load balance
   - increases the availability and fault tolerance
+- double LB to avoid signle point failure
+
+# Database replica
+- master database generally only supports write operations.
+- slave database gets copies of data from the master db and only supports read operations.
+- benefits
+  - Better performance
+  - Reliability
+  - High availability
+- db go offline
+  - only one slave db and it is offline, read ops go to master, if other slave dbs is alive, send to other slave dbs, replce the bad one
+  - if master go offline, a slave will be promted to new master.
