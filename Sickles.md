@@ -6,7 +6,6 @@
 - Dahema
 - petitepiggy
 - YanJF_
-- Pika
 - wfnuser
 
 ## Left
@@ -14,4 +13,7 @@
 - Thinkiny
 - WongDong
 - Ivan
+- Pika
+
+
 
