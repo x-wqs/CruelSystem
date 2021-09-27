@@ -3,9 +3,7 @@
 - Zhichuan
 - Grey
 - Jingwen
-- Dahema
 - petitepiggy
-- YanJF_
 - wfnuser
 
 ## Left
@@ -14,6 +12,8 @@
 - WongDong
 - Ivan
 - Pika
+- Dahema
+- YanJF_
 
 
 
