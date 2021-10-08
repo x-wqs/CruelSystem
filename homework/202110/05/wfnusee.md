@@ -1,3 +1,4 @@
+```
 package consistent
 
 import (
@@ -42,3 +43,4 @@ func (hashRing *HashRing) Get(key string) string {
 
  return hashRing.nodes[hashRing.keys[idx]]
 }
+```
