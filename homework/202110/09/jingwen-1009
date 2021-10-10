@@ -1,0 +1,39 @@
+第四章：rate limiter
+
+场景：限制用户短时间不能发布超过几个post，同一个ip只能做某几次事情，某个设备的限制
+
+目标：防止攻击，减少响应成本
+
+功能性需求：
+
+要能够用来限制ip，user id等等
+
+当用户被限制的时候通知用户
+
+非功能性需求：
+
+在服务器端（非客户端）
+
+需要接收大量请求
+
+在分布式系统场景下使用
+
+低延迟
+
+
+
+2 
+
+不同的放置方式：可以当做一个中间件（类似于防火墙），也可以在服务器旁边（？）
+
+当用户发送超额request的时候直接回应429（http专门码）
+
+一般都放在API gateway里（云微服务的设置）
+
+API gateway作用：
+
+rate limiting, SSL termination, auth, ip whitelisting, 静态资源
+
+rate limiting的算法
+
+token bucket：放满了token就扔掉新的token
