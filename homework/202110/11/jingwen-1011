@@ -1,0 +1,31 @@
+第四章 设计rate limiter
+
+Token bucket：
+
+定时refill固定个数的token，每个请求来的时候消耗一个token
+
+请求来的时候检查是否有available的token，有则用token让request通过，否则没有drop request
+
+？token会被下一阶段检查是否valid吗？
+
+怎么分bucket：如果对ip限制，则每个ip一个bucket；如果对账号限制，则每个账号一个bucket
+
+坏处：不是一分钟之内只能发4个请求，而是每个一分钟从8:24:00 - 8:24:59只能发4个请求
+
+
+
+硬性规定，软性规定：绝对不能超限制vs限制请求超额持续的时间
+
+
+
+分布式系统里
+
+同时支持多个服务器怎么做：每个ip有一个counter，记录在redis里面，request来的时候检查是否counter + 1 超过了限制，如果超过限制的话则不作为，如果没超过限制则+1.
+
+坏处：如果多个同时读counter可能会超
+
+解决：不用锁（太慢），用redis 的一个sorted set
+
+
+
+如何在不同的rate limiter里面sync，用sticky session？（是不是类似socket）
