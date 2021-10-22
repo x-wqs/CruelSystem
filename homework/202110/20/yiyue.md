@@ -49,4 +49,4 @@
  POST api/v1/data/shorten
  ```
  parameter: `{longUrl:longURLString}`
- return: short URL
+ return: shortURL
