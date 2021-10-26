@@ -24,18 +24,18 @@
 - Bandwidth: 600 * 500K / s = 300MBps = 2Gbps
 
 ## High Level
-                                DNS Resolver                            ContentDB  
-                                    ^                                        ^  
-                                    |                                        |  
-  SeedURL ---> URLFrontier ---> HTML Downloader ---> Content Parser ---> Content Seen?  
-                    ^                                                        |  
-                    |                                                Link Extractor  
-                    |                                                        |  
-                    |                                                    URL Filter  
-                    ------------------------------------------------------- |  
-                                                                        URL Seen?  
-                                                                            |  
-                                                                        URL DB  
+-                               DNS Resolver                            ContentDB  
+-                                   ^                                        ^  
+-                                   |                                        |  
+- SeedURL ---> URLFrontier ---> HTML Downloader ---> Content Parser ---> Content Seen?  
+-                   ^                                                        |  
+-                   |                                                Link Extractor  
+-                   |                                                        |  
+-                   |                                                    URL Filter  
+-                   +------------------------------------------------------ |  
+-                                                                       URL Seen?  
+-                                                                           |  
+-                                                                       URL DB  
 - Seed URL: starting point
 - URL Frontier: URL Queue, Kafka? 参考文献？
 - URL Filter: filter content types
@@ -44,9 +44,9 @@
 - DFS, Stack应该不支持
 - BFS, FIFO
 - Politeness Constraint: Delay for each Queue
-  Mapping Table ---> Queue Router ---> Q1 ---> Queue Selector ---> Worker Thread 1  
-                                   +-> Q2 -+                   +-> Worker Thread 2   
-                                   +-> Q3 -+                   +-> Worker Thread 3  
+- Mapping Table ---> Queue Router -+-> Q1 ---> Queue Selector -+-> Worker Thread 1  
+-                                  +-> Q2 -+                   +-> Worker Thread 2   
+-                                  +-> Q3 -+                   +-> Worker Thread 3  
 - Mapping Table <Host, Queue>
 
 
