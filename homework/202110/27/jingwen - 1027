@@ -1,0 +1,31 @@
+alex xu chap 9
+design a web crawler
+目的：
+1 搜索引擎，比如google
+2 网页历史记录存储
+3 网络挖掘 - 获取知识，为数据挖掘提供数据来源
+4 网络监控 - 监控版权盗用
+
+step 1
+功能性需求：
+1 给定url，下载所有的url对应的网页（html）
+2 从html中提取url
+3 对新的url重复步骤1
+需要考虑newly added的网页（？如果还没有人链接到他们，怎么搜索到新添加的呢）
+
+非功能性需求
+每个月收集1billion网页
+scalability：网络很大，需要同步爬取而不是只有一个机器
+robustness：有些坏链接也要考虑
+礼貌性：不应该短时间request一个网站太多次
+可拓展性：也能存储图片/视频之类的
+
+peak QPS：800page per second
+存储：500TB per month
+假设存储5年，需要30pb
+
+step 2
+seed url 
+分地区，分话题类别
+如果是全球的话，每个国家的热门网页
+url frontier
