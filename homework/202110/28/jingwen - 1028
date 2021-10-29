@@ -1,0 +1,19 @@
+content seen: 用hash去比较
+url seen：用bloom filter
+宽度优先搜索 vs 深度优先搜索
+宽度优先更好，但有短时间访问同一个网站多次的问题，还需要加上优先级的改进，优先级高的先被搜索
+
+url frontier
+能解决礼貌性问题和优先级高的先搜索
+有好几个queue，queue1 最高优先级，依次减少。
+队列选择器：按比例选择，queue1被选择最多。
+robots 先要看robots文件，该文件规定了可以被爬和不可以被爬的dir
+
+robustness：
+1 一致性哈希帮忙分摊load
+2 保存爬取状态
+3 数据验证
+
+step 4
+有些url是通过javascript弹出来的，所以需要服务器端js渲染把他们找到
+质量检测：不好的不要
