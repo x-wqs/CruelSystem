@@ -55,4 +55,19 @@ API-Gateway？ 这里把网关的功能也放在API Server里了。比较耦合
 - donate
   - userid, amount, cause
 
-## 具体接口设计
+## 具体接口设计：Donate
+
+主要application server内部要做什么，以及如何和支付API进行交互
+
+考虑支付可能遇到的场景，以及每个场景下如何处理
+1. Succ
+2. Fail/Rejected
+3. Expired
+
+对应的场景
+1. 如果支付成功了，需要同步更新DB里项目的余额，判断是否完成筹款
+2. 如果支付失败，可以提示用户重试
+3. 如果超时，xxxx （这里不清楚）
+
+## 数据结构
+这里主要是考虑内存
