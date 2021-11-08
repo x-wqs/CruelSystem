@@ -1,0 +1,23 @@
+#alex xu chap 12
+第一步骤
+功能性需求
+需要一对一聊天和群聊（聊天室）
+需要支持网页版和移动端
+50million 日活跃用户
+需要显示对方是否在线
+
+非功能性需求
+群聊人数限制100
+信息有100000字符的长度限制
+暂时不需要end to end 加密
+信息需要永久存储
+
+polling 拉取信息
+long polling 一直保持connection直到拉取到信息/链接过时
+web socket持续性保持链接
+storage
+data model
+怎么产生messageID：
+方法一 数据库的自增ID，但是nosql数据库一般没有
+方法二 参考第七章怎么产生一个多服务器同时进行的unique ID
+方法三 用一个本地unique ID，因为只是用来对同一个对话框/聊天室里的信息进行排序
