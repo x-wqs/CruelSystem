@@ -1,0 +1,75 @@
+design a chat system
+# design requirement
+- 1-on-1 or group chat
+- mobile / web
+- dau
+- group size limit
+- contacts num limit
+- message size limit
+- message type (text/media)
+- online/offline status
+- encryption
+- store chat history
+- add/rm contacts
+- multi-device login
+- sign up
+- user profile
+  
+# high level design
+- comm pattern: sender -> chat srv -> recver
+- protocol: 
+  - sender -> chat srv: HTTP, keep-alive (less TCP handshakes)
+  - char srv -> recver:
+    - polling: keep asking (inefficient if frequently)
+    - long polling: polling, but srv takes more time to wait and resp
+      - sender & recver need take to the same chat srv
+      - recver may have gone but srv still waits
+      - inefficient
+    - **websocket (BEST)**
+      - send async updates from srv -> cli
+      - persistent
+      - bi-directional
+      - based on http
+      - use port 80 or 443 so it works with firewall
+      - efficient
+- component categories
+  - stateless: 
+    - login / sign up / change profile
+    - LB -> app srvers
+  - stateful
+    - chat service
+    - makes sure consistent connection btw sender/chat srver/recver
+  - 3rd party
+    - notify a new message has arrived to user even when app is not running
+    - just doing integration is ok
+- capacity & scalability
+  - 1M concurrent user
+  - 10K per user connection
+  - 10GB mem for all connections
+  - start from single srv but finally cluster
+- arch
+  - chat servers
+  - persence servers
+  - LB
+  - api servers
+  - notification servers
+  - storage (KV? MySQL?)
+- data model
+  - kinds of data
+    - relational
+      - profiles
+      - user setting
+      - contacts list
+    - no-sql
+      - chat history
+      - easy horizontal scaling
+      - low latency to access data
+      - used by tech giants
+  - data-model
+    - 1-on-1
+    - group chat
+    - how: msg id
+      - unique in one chat is ok
+      - snowflake
+
+- to be done: design deep dive
