@@ -72,4 +72,4 @@ design a chat system
       - unique in one chat is ok
       - snowflake
 
-- to be done: design deep dive
+# to be done: design deep dive
