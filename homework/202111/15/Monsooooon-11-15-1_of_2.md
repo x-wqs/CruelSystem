@@ -95,6 +95,13 @@ use multiple tasks to represent diff requirements (watermark, thumbnail, inspect
 - Temp storage: store splitted vid fragment
 - Encoded vid
 
+# error handling
+- normal errors: recoverable (transcoding err) -> retry, non-recoverable (vid format not supported) -> inform user
+- task errors: retry by resources manager
+- RM errors: use replica to guarantee avalibility
+- API server error: API servers are stateless so requests will be directed to a different API server
+- meta db & cache: use single leader replication to increase avalibility
+
 # optimization
 - parallized video uploading & processing
 - use closest upload centers to users
