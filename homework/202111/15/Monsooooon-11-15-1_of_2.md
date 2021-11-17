@@ -81,5 +81,25 @@ user -> CDN
   - different user requirements, watermark, thumbnail images, HD vids
   - vid / audio / metadata are 3 diff parts and need seperate encoding work
 
-## DAG
-to be cont.
+## DAG model
+use multiple tasks to represent diff requirements (watermark, thumbnail, inspection, encoding, etc.)
+
+## transcoding arch (pipeline)
+- preprocessor: split vid into pieces(Group of Pictures, GOP)
+- DAG scheduler: downloading/add watermark/transcoding... task plan, generate DAG based on config files
+- Resource manager: schedule resources from yarn to worker
+  - task queue: It is a priority queue that contains tasks to be executed
+  - worker queue: It is a priority queue that contains worker utilization info.
+  - running queue: It contains info about the currently running tasks and workers running the tasks
+- Task worker: perform calculation based on pipeline
+- Temp storage: store splitted vid fragment
+- Encoded vid
+
+# optimization
+- parallized video uploading & processing
+- use closest upload centers to users
+- __use message queue to asynchronize exeuction pipeline__: decoupling
+- __to save cost: consider data distribution__
+  - less viewed vid: in blob storage
+  - popular vid: in cdn
+  - diff country, diff cdn content
