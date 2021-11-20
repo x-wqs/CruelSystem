@@ -10,7 +10,7 @@
 - https://github.com/refinedcoding/CruelSystem/tree/main/homework
 - 截图发群
 5. 读书笔记和论文/网上的/同学的相比超过50%雷同的；
-6. 坚持不到两周退群，请发退群红包；
+6. 坚持不到两周退群，请发退群红包；  
 N. 二进宫；
 
 
