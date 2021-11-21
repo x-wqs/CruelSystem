@@ -1,0 +1,13 @@
+CH8:
+  plan for the worst. Know what does not work. 
+  
+  Single Node:
+      Perfer crash completely rather returninig a wrong result 
+      
+  Scientific Computing:
+      If one component fail, the whole progress will halt. 
+     
+  Commercial DC: 
+      Built a reliale system from unreliable components. 
+      
+      
