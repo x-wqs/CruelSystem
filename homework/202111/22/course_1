@@ -1,0 +1,13 @@
+Single node:
+
+Scientific Compution: a giant computer
+        Act as a single computer, one component fail will halt the whole progress.
+        Very expensive hardware. Very reliable. 
+
+Commercial DC - Clos topology
+        Cost efficiency matters, use cheap commodity hardwares.
+        Something is always broken, no single point of failure.
+        Built a reliable system from unrealibale components: TCP on top of unreliable network
+        Error correcting code for corrupted data. 
+        
+        
