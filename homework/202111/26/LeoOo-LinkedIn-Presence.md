@@ -30,30 +30,26 @@ Solution: periodic heartbeats.
 ## Problem 3: Detect absence of heartbeat
 How to detect the absence of heartbeat? High-level idea is to create a 'delayed trigger' every time that we process a heartbeat. The trigger get reset when the next heartbeat come in, or it trigger the system to check the heartbeat of the user and publish an offline event. Any node can check the distributed KV store to check a user's presence.
 
-### Delayed trigger with Akka actor
+### How to implement delayed trigger?
+* With Akka actor (akka.io)
+
 Millions of user go online and offline at any moment, the solution needs to be lightweight.
+
 Akka is a toolkit for building highly concurrent, distributed, and resilient message-driven applications, and it works well with the Play Framework that we use at LinkedIn. Actors are objects which encapsulate state and the behavior defining what they should do when they receive certain messages. Each Actor has a mailbox and they communicate exclusively by exchanging messages. An Actor is assigned a lightweight thread when available, which reads the message from the mailbox and alters the state of the Actor based on the behavior defined for that message.
 
-Since Actors are so lightweight, there can be millions of Actors in the system, each with their own state and behavior. A relatively small number of threads proportional to the number of cores on the system can serve the Actors to execute their behavior when they receive these messages. *As each Actor receives a message, a thread is assigned to execute its behavior for that message* and then, it is free to be assigned to the next Actor.
-
-We can basically create one Actor per online member to act as the delayed trigger for that member and treat a heartbeat like a message in its mailbox.
-
-When a Heartbeat message is received for a member, we create an Actor for the member if it doesn’t already exist and start an Akka Scheduler within the Actor to send a Publish Offline message to itself after d + 2ε seconds.
-
-When the scheduler fires, the Actor handles the Publish Offline message by publishing an offline event if the member’s entry has expired in the K/V store, as described before.
+ThreadPool (e.g. 64 threads for 32 cores) => 2K Actors => Akka Scheduler => Publish to 2K Users.
 
 > I'm wondering how the actor framework is implemented, to be so lightweight but powerful, how can it now holding a thread for the scheduler to work, what if there're so many actors in the system that some actors starve?
 > Seems it is kind of like a command processor, the messages are like commands, upon receiving the command, the actor execute the command and alter its state.
 
 ### Pttting it together
-When Alice is interested in Bob’s presence status, she queries the Presence Platform through its GET API to get Bob’s current presence status (offline) and his last heartbeat timestamp. At the same time, she subscribes to changes in Bob’s presence status through the Real-time Platform.
 
-When Bob comes online, the Presence Platform detects that and publishes an online event to Bob’s presence status topic on the Real-time Platform.
+Alice Online => HeartBeat => Akka actor => Publish online event to her connections
+
+Alice missed a heatbeat in the next `d` seconds => Akka actor delayed scheduler triggered => Publish offline event to her connection
 
 The Real-time Platform sends the change in Bob’s status to Alice and Alice can now see Bob as online. This process is really fast and it takes less than 200ms at p99.
 
 This platform is built for massive scale. Each node in the Presence Platform can handle approximately 1.8K QPS of incoming requests (process heartbeat requests, GET API requests, etc.)
 
-> 1.8K QPS is not that impressive.Even on the slow side. It would take 1000 nodes to handle 1M QPS?
-
-
+> 1.8K QPS is probably due to the system has to maintain long poll for each user which become the bottleneck of the system. 
