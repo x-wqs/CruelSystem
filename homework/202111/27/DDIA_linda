@@ -1,0 +1,33 @@
+
+Reliability
+The system should continue to work correctly under faults.
+
+fault-tolerant(resilient more realistic):
+
+	fault: one component of the system deviating from its spec
+	failure: system stops providing the required service to the user
+    
+    prevent faults from failures
+	deliberately inducing faults to test
+	prefer tolerating faults over preventing faults:
+
+		Hardware Faults:
+			mean time to failuer (MTTF) = 10-50 years (10,000 disks, one disk dies per day)
+
+			add redundancy to hardware components: RAID, dual power supplies, hot-swappable CPUs
+					  multi-machine redundancy only required when high availability is essential
+					  As number of machines go up, machine instances may be come unavailable
+					  system tolerate loss of entire machines by software fault-tolerance techniques. 
+
+		Software Errors:
+
+			no quick solution
+
+
+
+Scalability
+Should have reasonable ways of dealing with that growth in data volume, traffic volume, or complexity
+
+Maintainability
+People should all be able to work on it productively.
+
