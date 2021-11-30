@@ -1,0 +1,14 @@
+## Continue 
+- systematic error, discrepancy 差异, decouple 解耦, sanbox，corner case, telemetry 遥测
+- degradation 服务降级，
+- Publish feeds, 4.6k/s, peek 12k/s, read 300k/s QPS, FanOut 扇出
+- 1st solution: select * from tweets;
+- 2nd solution: cache queue for each active user
+- 3rd solution: hybrid
+- throughput 吞吐量, response time = latency, service time, tail latencies 尾部延迟
+- SLO/SLA, service level objectives/aggrements, 服务级别目标/协议
+- queueing delay, head-of-line blocking
+- Vertical scaling, scaling up
+- Horizontal scaling, scaling out, shared-nothing, elastic, highly unpredicatable, stateless services
+- Lagacy 遗留系统, a big ball of mud 烂泥潭, accidental complexity 额外的复杂度
+- TDD, test driven development, refactoring 重构
