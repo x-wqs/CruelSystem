@@ -1,0 +1,19 @@
+Scalability
+cope with increased load
+
+    Load: load parameters (based on system)
+    
+    Performance: 
+    	throughput : number of records we can process per second
+    	response time:  the time between a client sending a request and receiving a response
+    			(percentile used in service level objectives (SLOs) and service level agreements (SLAs))
+
+
+    scaling up (vertical scaling, moving to a more powerful machine) 
+    scaling out (horizontal scaling, distributing the load across multiple smaller machines). 
+    elastic: automatically add computing resoures
+
+
+
+Maintainability
+People should all be able to work on it productively. (Operability, Simplicity, Evolvability)
