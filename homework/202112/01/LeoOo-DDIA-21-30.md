@@ -1,11 +1,14 @@
 # Data models vs query languages
-Relational model vs document model
+
+## Relational model 
 - data is organized into relations and each relation is an unordered collection of tuples.
 - data is normalized, no duplicates are stored, only need to modify one place to change.
 - mature, query engine and optimizers are highly optimized.
 - ACID
 - fit situations that require the most strict consistency level.
-Document model
+
+## Document model
+- NoSQL, not only SQL.
 - data is stored as a document, e.g. in a JSON format.
 - better locality, no need to query different table for related data.
 - flexible, no fixed schema.
