@@ -1,0 +1,16 @@
+Many-to-One: normalization in DB
+
+Many-to-Many: document databases made many-to-many relationship difficult, it did not support joins.
+			solution: 1. SQL. 
+
+Document databases: one-to-many: same as hierarchical model
+                    many-to-one and many-to-many: unique identifier (foreign key, document reference)
+
+
+
+relational databases: better support for joins, and many-to-one and many-to-many relationships.
+
+document data model:  schema flexibility, bet‐ ter performance due to locality
+
+			document-like structure
+
