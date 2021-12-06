@@ -1,0 +1,24 @@
+Relational database vs Document database
+
+	- Document database is schema flexible and beetter performance due to locality(no need to join)
+	- Relational database is good at joins, n to n and n t one relationships
+
+Which to use:
+If your application has a document like structure, then -> document model
+If need to join, probably -> relational database
+
+Document model
+Schema on read: similar to dynamic type checking in programming languages
+
+
+Relational model
+Schema on write: similar to static type checking in programing language
+
+Data locality:
+Reasonable locality could improve the performance. 
+
+Convergence of document and relational databases
+
+PostgreSQL, MySQL, DB2 supports json
+
+Documents database: RethinkDB supports joins
