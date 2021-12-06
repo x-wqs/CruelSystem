@@ -1,0 +1,13 @@
+Solution 1 (may not work):
+	1. Watch the keystrokes and fire a sync events, you can get every information about the documents and send to the server
+		○ Problem: Divergent. 
+			§ If there is a problem, it will never recover from that problem. If there is a issue, it will lead to that users will be editing totally different documents.
+			§ What about pasting, drawing etc.
+		○ We need to be convergent.
+
+
+
+Solution 2 (like source code control)
+	
+
+Problem: not in realtime.
