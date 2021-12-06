@@ -1,0 +1,36 @@
+Query Language:
+
+SQL
+	- Declarative language 
+		○ Declarative language could lend themselves to execute in parallel
+	
+IMS, CODASYL
+	- Query using imperative code
+
+
+MapReduce query
+	- Map and reduce functions are somewhat restricted in what they are allowed to do.
+	- Functions must be pure functions. They can't perform additional database query.
+
+
+Graph-Like Data Model
+
+Many-to-Many relationships
+	- Vertices - edges
+	- Property graph model, triple-store model.
+
+Query language:
+	- Cypher, SPARQL, Datalog
+
+Property Graph
+	- Each vertex:
+		○ Unique identitfier
+		○ Outgoing edges
+		○ Incoming edges
+		○ A collections of properties
+	- Each edge:
+		○ Unique identifier
+		○ Tail vertex
+		○ Head vertex
+		○ A label that describe the relationship
+		○ A collection of properties
