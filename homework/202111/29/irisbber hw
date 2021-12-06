@@ -1,0 +1,86 @@
+Reliable, scalable and maintainbale application
+
+
+Most of application is data intensive in stead of compute-intensive
+
+Data-intensive applicate:
+	- Database
+	- Remember the result of expensive(cache)
+	- Search indexes
+	- Stream procession
+	- Batch processing
+
+
+
+Fundamentals:
+	- Reliability
+			§ Systenm shoul work correctly even in the face of adversity(heardware, software, human fault).
+			§ Performs function expected
+			§ Tolerate mistakes
+			§ Performance is good enough under expected load and data volume.
+			§ Prevents unauthorized access and abuse.
+		Hardware faults
+			§ Usually solved by redundant resources + fault-tolerance techniques
+		Software faults
+			§ Test
+			§ Process isolation
+			§ Allow process to crash and restart
+			§ Measure and monitoring
+			§ Analyzing
+		Human fault
+	- Scalability
+		○ System's ability to cope with increase load
+		Load: 
+			- QPS
+			- Write/Read ratio
+			- Simultaneously active users
+			- Hit rate on a cache
+			- Etc
+		Describe performance
+			- Increase load, keep system resource unchanged, see how it the performance.’
+			- Increase load, how you increase the resource to keep the performance unchanged.
+			- User percentile is good way to measure performance.
+			- Outlier:离群值
+			- Queue delays -> offen account for large part of the response time at high percentile.
+		Approaches for cop with load
+			- Vertical scaling (add resource to single node)
+			- Horizontal scaling: add more machines
+	- Maintainability
+		○ Operability
+			- Monitoring the health and quickly restore 
+			- Tackling down the cause of problems
+			- Keep software and platform up to date
+			- Anticipating future problems
+			- Establish good practice and tools for deployment and config and more
+			- Performing complex maintenance tasks, such as move an application from one platform to another
+			- Maintain the security of the system
+			- Doc
+		○ Simplicity
+			- Abstraction
+		○ Evolvability
+			
+			
+		
+	- Maintability 
+		○ Should be easy to adapt the system to new use cases.
+	
+
+
+Data Model
+
+Relational model:
+	- Business data processing
+	- Lay out all the data in table
+	
+
+NOSQL
+	- Motivation
+		○ Scalability (larger dataset or high write throughput)
+		○ Specialized query operations
+		○ Need more dynamic and expressive data model
+	
+
+Relational database vs Document database
+
+	- Document database is schema flexible and beetter performance due to locality(no need to join)
+	- Relational database is good at joins, n to n and n t one relationships
