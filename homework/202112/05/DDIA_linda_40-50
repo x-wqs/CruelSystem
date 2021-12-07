@@ -1,0 +1,16 @@
+
+relational databases: better support for joins, and many-to-one and many-to-many relationships.
+					schema-on-write
+					grouping related data together for locality (multi-table index cluster tbles)
+					better than imperative code
+
+
+document data model:schema flexibility, better performance due to locality
+					cannot refer directly to a nested item within document
+					poor support to joins, poor support to many-to-many relationships
+					no enforced schema schema-on-read (the structure is implicit, and only interpreted when the data is read)
+					easier to change the format of data
+
+                    use when a document-like structure
+                    locality advantage applies if need large parts of documents at the same time
+                    On updates to a document, the entire document usually needs to be rewritten—only modifications that don’t change the encoded size of a document can easily be per‐ formed in place
