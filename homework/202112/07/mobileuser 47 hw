@@ -1,0 +1,48 @@
+Property Graph
+	- Each vertex:
+		○ Unique identitfier
+		○ Outgoing edges
+		○ Incoming edges
+		○ A collections of properties
+	- Each edge:
+		○ Unique identifier
+		○ Tail vertex
+		○ Head vertex
+		○ A label that describe the relationship
+		○ A collection of properties
+Create table Vertices {
+Vertext_ID: Primary key,
+Properties: Json
+}
+
+Create table edges {
+	Edge_id: primary key,
+	Tail_vertex: integer references vertices(vertex_id)
+	Head_vertex integer reference vertices(vertex_id),
+	Label text,
+	Properties json,
+}
+
+Create index edges_tail on edge (tail_vertex)
+Create index edges_heads on edges (head_vertex)
+
+Important aspects:
+	- An vertex can have an edge connecting it with any other vertex
+	- Given a vertex, it's easy to find both its incoming and outgoing edges -> traverse the graph
+	- Using different labels for different relationships
+
+Pros:
+	- Graph models could do the things that difficult for relational models. Such as, different country has different regional structures (France has departments and regions while US has counties and states).
+	- Easy to evolve. Graph can easily to add the new nodes
+
+Cypher Query Language:
+	- Different data models are designed for different use case, even same query in one query could requires more queries in other.
+
+Triple-Stores and SPARQL
+
+Triple-store model is mostly the equivalent to the property graph model, but using different words to describe the same ideas.
+Format: three-part statement: (subject, predicate, object) eg (Jim, likes, Bananas)
+	- Subject is same to vertex in graph model
+	- Object is one of two things:
+		○ Properties 
+		○ Another vertex in graph 
