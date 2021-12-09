@@ -1,0 +1,15 @@
+ Graph-like Data Models: mostly many-to-many relationships 
+
+					Property Graphs -> Cypher Query Language
+
+					Triple-Stores -> (subject, predicate, object) (nothing to do with sematic web)
+
+					RDF can be written in XML format; Turtle/N3; Apache Jena can convert between RDF formats. 
+					RDF is designed for internet-wide data exchange
+					SPARQL is a query language for trple-stores using the RDF data model.
+
+1. Document databases target use cases where data comes in self-contained docu‐ments and relationships between one document and another are rare.
+
+2. Graph databases go in the opposite direction, targeting use cases where anything is potentially related to everything
+
+
