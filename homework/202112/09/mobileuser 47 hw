@@ -1,0 +1,33 @@
+Triple-Stores and SPARQL
+
+Triple-store model is mostly the equivalent to the property graph model, but using different words to describe the same ideas.
+Format: three-part statement: (subject, predicate, object) eg (Jim, likes, Bananas)
+	- Subject is same to vertex in graph model
+	- Object is one of two things:
+		○ Properties eg, (lucy, age, 33) -> predicate(谓词） age is like property 
+		○ Another vertex in graph, (lucy, married to, allen),  predicate is like a edge
+	
+	
+ The SPARQL query language
+Select ?personName where {
+Person :name  ?personName
+?person :BornIN  // :within*// :name "US".
+?person :livesIN  //:within*// :name :Europe"
+}
+
+
+Graph database vs network model
+
+	- Network model: it has schema restriction while graph database doesn't
+	- Network model: the only way to access a particular record is to traverse one of the access path. 
+		○ In graph datamodel, it can access vertex by its unique ID.
+	- In network model, the children of a record are ordered set.
+		○ In graph model, vertices and edges are not sorted
+	- In network model, all queries are imperative.
+		○ In both imperative code and declarative language work.
+
+
+Summary:
+
+Document database: use case where data comes in self-contained documents and relationships between on documents and another are rare
+Graph database goes in the opposite direction, anything is related to everything.
