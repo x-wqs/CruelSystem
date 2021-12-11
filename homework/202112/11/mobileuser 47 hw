@@ -1,0 +1,66 @@
+Storage and retrieval
+
+Different database is optimized for different purpose (transactional workload and analytics)
+
+
+Data structure
+
+	- Index
+		○ An additional structure that is derived from primary data.
+		○ Index will incur overhead (造成额外的开销）
+		○ Well-chosen index will speed up read queries but every index will slow down the writes
+
+
+Hash Indexes
+
+	- Keep a in-memory hash map of (key, offset) to track the record position.
+
+Disk space handling
+
+	- To avoid disk space running out issue, we can break the log into segments of certain size. When it reaches a certain size, we make subsequent writes to a new segment file.
+	- We can perform compaction(压缩）on these segments.  （对于log来说）
+		○ Compaction
+			§ Delete duplicate keys and only keep only the most recent update for each key
+			§ We can also merger several segments together at the same time. (Done in background)
+		○ When finding the value for a key, firstly check the most recent segment's hash map, if he key is not there, check the second most recent segment  and so on.
+	- Implementation
+		○ File format
+			§ Binary file is fast
+		○ Deleting records
+			§ Append a special deletion record to the data file (tombstone 墓碑). When log segments are merged, the tombstone tells the merge process to discrad the previous value fro the deleted key
+		○ Crash recovery
+			§ Store the hash map to disk, in case need to reload when recovering from crash.
+		○ Partially written records
+			§ When crash happens halfway through appending a record. Checksum could be able check the corrupted parts and ignore them.
+		○ Concurrency control
+			§ One writer per time
+	- Pros
+		○ Appending is faster than random write (overwrite old record)
+		○ Concurrency and crash recovery are simpler.
+		○ Merging can prevent gragments
+	- Cons
+		○ Hash must fit in memory
+		○ Range query is not efficient
+
+SSTable and LSM-Tree
+	- 
+	- Merge each record from each segments ordered by key. If there is duplicated, just used the most recent segments
+	- We don't need to keep every key in memory. We just know the boundary keys and find he key between them.
+	- The key in memory could be the first key in segments and value could be the offset of that key.
+
+
+	- Construct and maintain SSTable (use balanced tree)
+Key point is to keep the records ordered by key.
+	基本思想： memory里有个b tree，有新的record进来就更新树，如果树够大就存到db里，这个segment就是相对有序的。 同时后台有一个merge sort的线程不停扫描db中的segment进行merge sort 最终整个数据库都是sorted
+		○ Write data to b balanced tree in memory (memtable)
+		○ When size_of(memtable) > threshold, write data to disk as n SSTable
+		○ Background process keep merging the SSTable in db and to discard overwritten or deleted values.
+		○ When performing write
+			§ First check memory table (memtable)
+			§ Then first segmetns
+			§ Then next segments, till the record is beeing found
+			
+			
+	如何避免 memory中的数据丢失呢（没存就崩了）
+		○ Keep a appending log for memtable, after written to DB, delete it.
+	
