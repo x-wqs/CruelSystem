@@ -1,0 +1,20 @@
+Storage engines: optimized for transactional workloads 
+                 optimized for analytics
+
+log-structured storage engines:
+		append-only data file. (log is an append-only sequnce of records)
+		to efficiently find the key-vale: index (slows down writes, speed up reads)
+
+		Hash Indexes:(for key-value data):
+			Simplest: Bitcast (default storage engine in Riak): keep an in-memory hash map where every key 														is mapped to a byte offset in the data file
+					 All the keys fit in the available RAM (value don't have to)
+					 Use when the value for each key is updated frequently. (lots of writes, not many distinct keys)
+					 break the log into segment files, compaction on these segments
+					 Compaction: throw away duplicate keys in the log, keep the most recent update for each 			key
+
+
+
+		SSTables and LSM-Trees:
+
+
+page-oriented storage engines: (B- trees)
