@@ -1,0 +1,14 @@
+#Ch3 Data store and indexing
+- 哈希索引
+- SSTable in Memory, LSM Tree on Disk
+- B Tree
+- B Tree vs LSM Tree
+- Value in Index
+- Multiple Column Index
+- Text Index
+- 模糊索引
+- Store All in Memory
+- OLTP or OLAP
+- Data Warehouse
+- Star Model vs Snowflake
+- Column Store
