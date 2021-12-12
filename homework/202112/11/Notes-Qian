@@ -1,0 +1,9 @@
+系统的可靠性是相对的，我们并不总是追求系统绝对的可靠。
+在经费特别缺乏的情况下，少用几台数据库做备份是可以被理解的。
+数据库的可扩展性十分重要，它是系统扩展的重要环节，也是比较难的环节。
+系统的可维护性是对一个成熟产品的重要考验，在一个产品的开发过程中，强调代码的可维护性强调的再多也不算多。
+
+
+散列表必须能放进内存,原则上可以在磁盘上保留一个哈希映射，不幸的是磁盘哈希映射很难表现优秀，原因在于磁盘需要大量的随机访问I/O，当它变满时增长是很昂贵的，并且散列冲突需要很多的逻辑。
+log storage: 1. SSTable 2.Another log on disk in case of the crash of DB. It is used to recover the system.
+B tree: like a inventory, the upper layer defines the range of the lower layer. There are 3 to 4 layers in B tree. 
