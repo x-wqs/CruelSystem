@@ -1,0 +1,7 @@
+			break the log into segment files, compaction on these segments
+			Compaction: throw away duplicate keys in the log, keep the most recent update for each 			key
+      
+      		SSTables and LSM-Trees:
+
+
+page-oriented storage engines: (B- trees)
