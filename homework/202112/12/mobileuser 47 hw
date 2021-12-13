@@ -1,0 +1,29 @@
+Staring from monolithic
+
+Cleint -> Leo -> DB
+
+Leo (monolithic) server does all
+
+Problems
+	- Need to query member to member connections using graph travesals and with top efficiency and performance.
+		○ Cloud(service) to query member graph was born.
+	- Linkedin needs search -> Lucene was built( now is https://engineering.linkedin.com/search/did-you-mean-galene)
+
+
+Next Problem
+Site grew:
+	- More traffic, Leo -> grows. Increasing the role and responsibility -> complexity.
+		○ LB helped as more instance of Leo were spun up.
+	- But more load was added to member profile DB!
+
+Solution
+	- Replica slave DBs were introduced.
+	- Main DB for writing, Slave DBs for reading.
+		○ They were set up to handle all read traffic and logic was built to know when it was safe (consistent) to read from a replica versus the main master DB.
+
+Next Problem:
+	- Leo is becoming more and more complex. It goes down in production.
+
+Solution
+	- Break it up to many small functions and stateless services.
+It became service oriented architecture.
