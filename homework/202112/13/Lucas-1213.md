@@ -1,0 +1,12 @@
+# CH3 Storing and Indexing
+- SSTable: Sorted String Table
+- 合并后，只保留每个键的最新值
+- LSM Tree: Log Structured Merge Tree
+- 分成三步，MemTable, Immutable MemTable, SSTable
+- 先通过WAL，Write Ahead Log 预写日志写入磁盘，避免数据丢失
+- 把最近的更新操作，保存到内存中的MemTable
+- 然后MemTable达到一定大小的时候，变成Immutable MemTable
+- 同时创建新的MemTable
+- SSTable是LSM树在磁盘上的数据结构
+- 不支持Delete/Update In Place 而是插入新的键值对，DelKey：abc
+- LevelDB, RocksDB等键值数据库
