@@ -1,0 +1,7 @@
+		SSTables and LSM-Trees (Log-Structured Merge-Tree):
+
+			Sorted by key (Sorted String Table SST)
+			in-memory index to tell the offsets for some of the keys. (sparse)
+			group records into block and compress it before writing to disk
+			Each entry of the sparse in-memory index then points at the start of a compressed block.
+			tree-insert keys in any order and read them back in sorted order.
