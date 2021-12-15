@@ -1,0 +1,12 @@
+The evolution of Linkedin II
+
+1. Some mid-tier caches were storing derived data which causes complexity around invalidation. Then Linkedin removes many of them 
+to help the system scale horizontally.
+
+2. Kafka helps with each individual pipeline needed to scale and provide a universal pipeline. 
+
+3. Moving away from RPC solved high coupling with presentation tiers and many backwards compatibility problems.
+
+4. The system is a consistent stateless Restful API model across the company with Rest.li as a data model centric architecture.
+
+Till now, the work is done.
