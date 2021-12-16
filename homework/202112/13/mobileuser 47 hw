@@ -1,0 +1,77 @@
+- B-Tree keep key-value pairs sorted by key, which allows efficient key-value lookups and range queries.
+
+-  
+	- B tree break the database into fixed size of blocks or page (traditionally 4K)
+		○ Each page can be identified using a address or location. 
+
+
+
+Search / update
+	- From root, search the leaf that contains that key (based on the range)
+	- Update the value 
+	- Write back to disk.
+
+Add a new key
+	- Find the page the encompasses the new key
+	- Add the new key to that page.
+	- If not enough space in that page
+		○ Split the page into two and update parents referrence to new subdise.
+
+
+
+B-Tree 的更新安全
+
+Avoid data loss which updating data change the leaf references.(orphan)
+
+	- To avoid corrasion
+		○ Write ahead log
+			§ Record all the operations that will be performing
+		○ Copy on write 
+			§ Copy all the page need to be modified
+			§ Update the copy 
+			§ Point the reference to the new copies.
+
+B Tree 的优化
+	- Lay out the tree so that leaf pages appear in sequential order on disk.
+		○ Need implementation supports
+	- Each page has spare space to link the current page to it's siblings
+
+
+Compare Btree  vs LSM Tree
+
+LSM tree
+
+Pros
+	- Sequential write， fast
+	- Tiered storage，frequent update look up fast
+	- Compression better，less fragments
+	- Lower write amplification 
+		○ Sequential write + compaction。
+			§ 不直接overwrite
+		○ B tree
+			§ 不仅有data 还要有很多extra data （reference etc）
+Cons
+	- Compact affects read and write
+	- Performance is less predictable
+	- Key existed in several places, add complexity to transaction isolation
+
+
+
+Other Indexing Structure
+
+Secondary index
+	- Global secondary index
+		○ Data are stored in thousand of nodes
+		○ Create secondary index against all node
+		○ Second index 会造成write slow， 是个trade off based on access pattern
+	- Local secondary index
+	- Write amplification （Btree）
+       对于b tree的value，it could be value or reference index which it points to the value address
+		○ Clustered index
+			§ In memory， the row and index are together
+		○ Covered index
+		○ Only reference index
+	- Multi-column index
+		○ Ignore
+	- Fuzzy search in Lucene
+		○ Lucene is a trie
