@@ -1,1 +1,10 @@
+1. JSON & XML > JSON > XML, 紧凑以及更快的解析格式很重要。
+   Protocol Buffers is a kind of binary format. Protocol Buffers is a free and open-source cross-platform data format used to serialize structured data. 
+   It is useful in developing programs to communicate with each other over a network or for storing data. 
+    
+2. 模式不可避免地随着时间而改变，所以，Protocol Buffers需要处理模式更改，保持兼容性。前向兼容性：简单地忽略该字段。数据类型注释允许解析器确定需要跳过的字节数，
+   也就是说旧代码可以读取由新代码编写的记录。
+   向后兼容性性怎么做？只要每个字段都有一个唯一的标签号码，新的代码总是可以读取旧的数据，因为标签号码仍然具有相同的含义。
+   所以，添加一个没有默认值的字段，新的阅读器将无法读取旧作者写的数据，所以你会破坏向后兼容性。
+
 
