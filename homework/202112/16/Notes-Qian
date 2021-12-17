@@ -1,1 +1,8 @@
+Scaling Memcache at Facebook
 
+First, users consume an order of magnitude more content than they create. This behavior results in a workload
+dominated by fetching data and suggests that caching
+can have significant advantages. Second, our read operations fetch data from a variety of sources such as
+MySQL databases, HDFS installations, and backend
+services. This heterogeneity requires a flexible caching
+strategy able to store data from disparate sources.
