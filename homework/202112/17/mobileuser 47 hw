@@ -1,0 +1,30 @@
+Sort order
+	- Sort by appending order
+	- If sort sort all (since it's column oriented DB)
+		○ Admin should determine the order serquence
+			§ By date if more query againts time
+		○ First order column + second order column
+
+Write to column-oriented storage
+	- LSM-trees
+
+Aggregation: materialized views
+	- In relational data model, it's defined like standard (virtual) view
+	- Materialized view is an acutual copy of query result, written to disk
+		○ When uderlying db changes, a materizled view need to be updated.
+	- Virtual view is a shorcut for writing queries.
+
+Summary:
+OLTP:
+	- User-facing
+	- Huge request, less data per request
+	- Two main storage strategies
+		○ Log-structed
+			§ Appending only, delete outdated data
+				□ Bitcask, SSTables, LSM-Trees, LevelDB, cassndra, Hbase. Lucene
+		○ Update in place school
+			§ B tree
+				□ Relational DB
+				□ No relational DB
+OLAP
+Less query but huge throughput
