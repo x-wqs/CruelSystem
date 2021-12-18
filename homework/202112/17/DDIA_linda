@@ -1,0 +1,12 @@
+	secondary indexes
+
+	clustered index (storing row data within index) || nonclustered index(only references to the data)
+	compromise: covering index or index with included columns
+
+	multi-column indexes: concatenated index 
+						  multi-dimensional index (R-tree)
+
+	 in-memory databases: can be faster because they can avoid the overheads of encoding in-memory data structures in a form that can be written to disk
+
+
+
