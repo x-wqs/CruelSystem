@@ -1,12 +1,27 @@
-	secondary indexes
+star schema (dimensional modeling):
+	facts: individual events (attributes + foreign key references(dimension tables))
+	simpler for analysts to work with
 
-	clustered index (storing row data within index) || nonclustered index(only references to the data)
-	compromise: covering index or index with included columns
-
-	multi-column indexes: concatenated index 
-						  multi-dimensional index (R-tree)
-
-	 in-memory databases: can be faster because they can avoid the overheads of encoding in-memory data structures in a form that can be written to disk
+snowflake schema: dimensions are further broken down into subdimensions;
+					more normalized
 
 
+column-oriented storage:
+	each column file containing the rows in the same order
+
+	column comression:
+		bitmap encoding: n distinct values -> n separate bitmaps; one bitmap for each distinct value
+												one bit for each row
+						run-length encoded
+
+		benefits: memory bandwidth and vectorized processing
+
+	sort order:
+		benefits: can help with compression of columns
+		store the same data sorted in several different ways
+
+	write:
+		read fast, write is difficult
+		
+		
 
