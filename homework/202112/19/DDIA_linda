@@ -1,0 +1,14 @@
+Encoding Data:
+	The trans‐ lation from the in-memory representation to a byte sequence is called encoding
+	built-in support for encoding in-memory objects into byte sequences.
+	tied to a particular programming language.
+
+	JSON:
+		 a lot of ambiguity around the encoding of numbers. 
+		 JSON and XML have good support for Unicode character strings (i.e., human- readable text), but they don’t support binary strings
+
+	Binary encoding:
+		JSON is less verbose than XML
+		
+	
+	
