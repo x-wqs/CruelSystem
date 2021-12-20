@@ -1,0 +1,9 @@
+ACID of DB
+Atomicity describes what happens if a clent wants to make several writes, but a fault occurs after some of the writes have been processed.
+Consistency: includes replica consistency and eventual consistency. 
+  - Consistent hashing: is a way of evenly distributing load across an internet-wide system of caches such as a content dilivery network. It uses
+    randomly chosen partition boundaries to avoid the need for central control or distributed consensus. This is not a good approach to assign tasks.
+ Isolation: several clients access the same database records, it may run into concurrency problem.
+ Durability: The purpose of a databse system is to provide a safe place where data can be stored without fear of losing it. Durability is the promise that 
+ once a transaction has committed successfully, any data it has written will not be forgotten, even if there is a hardware fault or the database crashes.
+ 
