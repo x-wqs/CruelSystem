@@ -1,0 +1,15 @@
+1. SSTable: maintaining a sorted structure on disk. 
+It only suffers from one problem: if the database crashes, the most recent writes are lost. It is built in memory.
+
+2. LSM-tree: the algorithm described here is essentially what is used in LevelDB and RocksBD, key-value storage engine libraries 
+that are designed to embedded into other applications.
+
+3. Performance optimizations
+A lot of detail goes into making a storage engine perform well in practice. 
+The LSM-tree algorithm can be slow when looking up keys that do not exist in the database. 
+The most common options are size-tiered and leveled compaction.
+
+4. In order to make the database resilient to crashes, it is common for B-tree implementations to include an additional data structure on disk: a write-ahead log. 
+This is an append-only file to which every B-tree modification must be written before it can be applied to the pages of the tree itself.
+
+5. When the database comes back up after a crash, this log is used to restore the B-tree back to a consistent state.
