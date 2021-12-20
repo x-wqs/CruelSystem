@@ -1,0 +1,53 @@
+Encoding and evolution
+
+Backward compatability 
+	- New code compatable with old data
+Forward compatability 
+	- Older code should be compable with new data
+
+ Best practice:
+	- Not add madatory data in new versions but using optional
+	
+	
+	
+Formats for encoding data:
+
+Two representations of data
+	- In memory data is kept in objects, arrays etc data structure. Optimized for efficient access and manipulated by CPU (using pointers)
+	- Send data over network. Encoded it as some self-contained sequence  of data.
+		○ JSON, XML, CSV
+	
+From in-memory representation to a byte sequence is called
+	- Encoding, serialization, marshalling
+	- Decoding, deserialization, unmarshalling
+
+
+
+JSON, XML, CSV, binary variants
+
+	- XML and CSV can't identify it's number or string like (15 is a number or it's string 15) 
+		○ Json can't distinguish interger and flowting-point number and it doesn’t specify precision.
+	- JSON and XML supports unicorde character(human-readable) but don't support binary
+		○ If want to store binary, need to ending by base64 then store it
+	- CSV is vague
+		○ Separated by Comma
+Binary encoding
+	- Suitable for internal data transfer
+	- MessagePack for JSON encoding
+		○ BSON etc
+Thrift and protocol buffers
+	- Thrift and protocol buffers are binary encoding libraries that are based on the same principle.
+	- Developer need to specific the schema to tell the types of data to be encoded
+		○ Client encoded the data and send it to server
+		○ Server decode the thrift data and turn it into native data structure
+			§ Eg Python encode data in ptyhon via thrift -> JAVA server -> JAVA server decode it to java data structure
+
+
+{
+	Required string user_name = 1;
+	Optional int64 number = 2;
+	Repeated string interests = 3;
+}
+
+The encoding data only contains the field flag which is number, but no field names. (Compare messagePack) same more data size
+
