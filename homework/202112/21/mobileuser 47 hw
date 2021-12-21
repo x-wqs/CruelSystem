@@ -1,0 +1,39 @@
+Schema compatibility
+	- Field name change OK
+	- Field tag number change not OK
+	- Add new field OK
+	- New field must be optional
+	- Remove optional OK
+	- Remove mandatory not OK
+	- Data type change, Probably OK but risky
+		○ Int -> long OK
+		○ Int to String most of time not OK
+
+
+Avro. Writer/reader schema
+
+
+For transiting data between different database
+Field name is important, no field tag
+
+Writer and reader both have schema
+
+
+	- Large file with lots of records
+		○ Storing a large file containing millions of records, all encoded in same schema
+		○ Writer of that file can just include the writer's schema once at the beginning of the file.
+	- Send records over network connects
+		○ Two process communicate over network connection. They can negotiate the schema version and setup.
+	- Dynamic generate schema
+
+
+Dataflow
+
+Wrong way:
+	- Via database
+		○ A value in the database may be written by a newer version of the code, and might be read by an older version code. The meaning are deferent.
+		○ It could mass up
+		○ There might be some special logic in API but if you directly communicate with database is terrible.
+Via API (service call)
+
+Via message queue
