@@ -9,6 +9,30 @@ Encoding Data:
 
 	Binary encoding:
 		JSON is less verbose than XML
+		include all object field names somewhere else
+
+		Apache Thrift -> binary encoding libraries
+			require a schema for any data encoded:
+				1. describe the schema in IDL
+				2. code generation tool : shema defination -> produce classes
+
+				BinaryProtocol (no field names) and CompactProtocol (packing the field type and tag number into a single byte,)
+
+				dedicated list datatype
+
+
+		Protocol Buffers ->each field was marked either required or optional
+
+				If a field value is not set, it is simply omitted from the encoded record
+				simply ignore that field
+
+				does not have a list or array datatype
+
+		Avro:
+			uses a schema
+			nothing to identify fields ro their datatypes
+			decode: translate from write's schema into reader's schema
+			
 		
 	
 	
