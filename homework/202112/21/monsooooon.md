@@ -1,4 +1,8 @@
-ddia
+ddia p131-...
+
+previous reading progress
+https://github.com/refinedcoding/CruelSystem/blob/main/homework/202112/19/monsooooon.md#encoding--evolution-overview
+
 
 # message passing dataflow overview
 - async message-passing: 
