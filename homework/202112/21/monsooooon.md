@@ -1,6 +1,6 @@
 ddia p131-...
 
-previous reading progress
+previous reading progress (p121-p131)
 https://github.com/refinedcoding/CruelSystem/blob/main/homework/202112/19/monsooooon.md#encoding--evolution-overview
 
 
