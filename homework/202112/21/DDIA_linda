@@ -1,4 +1,3 @@
-
 		Avro:
 			uses a schema
 			nothing to identify fields ro their datatypes
@@ -17,5 +16,21 @@
 		    	large file with lots of records:
 		    		include at the begining 
 
+		    	individual records:
+					include a version number, keep a list of schema versions
 
-		    	include a version number
+				sending records over a network connection:
+					negotiate the schema version on connection setup
+
+			Avro is friendlier to dynamically generated schemas
+			Thrift and Protocol Buffers rely on code generation
+
+
+Modes of Dataflow: (who encodes, who decodes):
+
+	Dataflow through DB:
+		writes encodes, reads decodes
+		data outlives code
+		add default value to old data
+
+		dump to DW: latest schema, immutable, use avro
