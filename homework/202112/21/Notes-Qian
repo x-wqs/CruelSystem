@@ -1,0 +1,12 @@
+1. JSON, XML, Protocol Buffers, Thrift, and Avro data format are widely used in communication.
+   Protocol buffers, Thrift, and Avro all use a schema to describe a binary ending format which are much simpler than XML Schema or JSON Schema,
+   which support much more detailed validation rules. And they save some storage space.
+
+2. Thrift and Protocol Buffers rely on code generation: after a schema has been defined, you can generate code that implements this schema in a
+programming language of your choice. 
+
+JSON, XML, and CSV have a few nice properties:
+1) They are more compact than "binary JSON" by omitting the field name.
+2) The schema is a valuable form of documentation, and it is always up to date because the schema is required for decoding.
+3) Forward and backward compatibility ofschema changes are needed before deploying.
+4) It can generate cde from the schema directly. 
