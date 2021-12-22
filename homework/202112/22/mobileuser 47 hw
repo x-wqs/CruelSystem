@@ -1,0 +1,64 @@
+Via API (service call) REST / RPC
+Goal is to decouple
+	- Server expose an API (called service), client make a request via that server and make a connection
+		○ Client and server need to agree on the details of that API
+	- Web browser <->  web application
+	- Web appilication <-> web application in same org (internal)
+	- Web application <-> web application over internet via public API 
+Three major approaches
+	- REST (Representational state transfer) API
+		○ REST is a design philosophy not protocal
+			§ Simple data formats,
+			§ Use URLs for identifying resources 
+			§ Using Http features for cache control, authentication, content type negotiation, 
+		○ REST has no agreement on versioning
+		○ API design should be idempotent (幂等的）
+
+	- SOAP API
+		○ XML-based protocol
+		○ Define an action
+			§ Involve code generation
+		○ Cons
+			§ Not well supported by dynamic typed PL
+			§ Implementation usually cause problems
+	- Graphql
+
+Flaws:
+	- Local function call is predictable but network call is not predicable.
+		○ Lost maybe due to network, remote server outage, remote server handles slow etc
+			§ Retry
+		○ Local function: returns only has two results, vs RPC(3 possible results)
+			§ return a result or throw an exception
+			§ Return a result with data, no returns, return with empty data(timeout)
+		○ If retry a failed network request, it could execute on server but just lost in network, so REST API design should be idempotent 
+		○ Network API  call execution time is not predicable(varies lots)
+		○ RPC usually involve encoding/ encoding
+		○ If client and server implemented by different PL, it needs data type transfer/
+			
+			
+Direction for RPC
+	- Have feature to handle the async function that may failed
+	- Stream requests to support batch requests at once
+	- Service discovery to find out particular server
+
+Via message queue/kafka
+	- Act as a buffer, if the recipient is unavailable or overloaded.
+	- Decouple client and server
+		○ If server resource is tight -> add more servers
+		○ If servers are down, the message queue is still there and waiting, it would lose the data
+		○ Sender doesn’t need to know the receiver's IP and port number
+		○ It allow one message to be sent to several recipients
+			§ Design Youtube, design user watch a data passing data flow using message queue.
+		○ Logically decouples senders from recipients
+	
+	
+Message-passing communication is usually one-way: sender normally donesn't expect to receive a replay to it's messages.
+
+	- It's possible to send a response, but it would usually be done on a separate channel.
+		○ Asynchronous.
+
+
+Distributed actor framework
+	- Actor represent a client or entity
+	- It has some local states
+	- AKKA
