@@ -1,0 +1,21 @@
+
+		Avro:
+			uses a schema
+			nothing to identify fields ro their datatypes
+			decode: translate from write's schema into reader's schema
+					in writer, not in reader: ignored
+					not in writer, in reader: default value declared in reader
+
+			add/remove field with a default value
+
+			forward compatibility: writer has new version
+			backward compatibility: writer has old version
+
+			explicitly mention null can be default
+
+		    writer's schema known by:
+		    	large file with lots of records:
+		    		include at the begining 
+
+
+		    	include a version number
