@@ -1,0 +1,3 @@
+- The Architecture Twitter Uses To Deal With 150M Active Users, 300K QPS, A 22 MB/S Firehose, And Send Tweets In Under 5 Seconds
+- http://highscalability.com/blog/2013/7/8/the-architecture-twitter-uses-to-deal-with-150m-active-users.html
+- 问题是好友A和B关注了明星C,C发了帖子1，花了一秒分发到A,A跟帖2了,跟帖2花了一秒传到B,帖子1花了五秒才分发到B，问怎么才能保证让B在跟帖之前看到主帖？
