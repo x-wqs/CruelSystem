@@ -1,0 +1,18 @@
+Distributed Data:
+	scalability:
+
+	Fault tolerance:
+
+	Latency: 
+
+	shared-memory architecture:
+		CPU, RAM, disks joined together for one OS -> single machine
+	shared-disk architeture: 
+		several machines, independent CPU, RAM, but array of disks to share
+	shared-nothing:
+		Each node uses its CPUs, RAM, and disks independently. 
+		coodination between nodes is done at software level-> conventional network
+
+	Replication
+
+	Partitioning == sharding 
