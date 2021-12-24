@@ -1,6 +1,6 @@
 ddia p144-p151
 
-previous read progress (p131-p141)
+previous read progress (p131-p141) https://github.com/refinedcoding/CruelSystem/blob/main/homework/202112/21/monsooooon.md#message-passing-dataflow-overview
 
 part ii. distributed data
 
