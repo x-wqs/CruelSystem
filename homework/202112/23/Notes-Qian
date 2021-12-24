@@ -1,0 +1,11 @@
+1. REST is a design philosophy, in the context of cross-organizational service integration, it can be associated with microservices. 
+The RESTful is the API based on the principles of REST.
+Pros of REST:favor simpler approaches, less code generation and automated tooling.
+Swagger is a great tool to describe RESTful API and generate a document for the whole system. 
+
+2. RPC(remote procedure call)
+GRPC is a kind of RPC.
+RPC vs local call: 1. unpredicatable due to the network or remote machine; 2. can't get response from the remote service; 3. may execute multiple times due to the
+previous property. 4. execution time is unexpected; 5. large objects as parameters are too heavy for transformation; 
+6. it can be impemented using different languages, for example, serve can be Java and client is Python.
+Scenarios for applying RPC: 
