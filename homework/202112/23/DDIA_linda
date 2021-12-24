@@ -1,0 +1,76 @@
+Modes of Dataflow: (who encodes, who decodes):
+
+	Dataflow through DB:
+		writes encodes, reads decodes
+		data outlives code
+		add default value to old data
+
+		dump to DW: latest schema, immutable, use avro
+
+
+
+	service: REST and RPC:
+		service： The API exposed by the server
+		server: a server can itself be a client to another service
+		microservies: one service makes a request to another
+		services expose an application-specific API that only allows inputs and outputs that are predetermined by the business logic
+
+		key design goal: make services independent
+
+
+		web service (making API requests over a network):
+
+			REST: a design philosophy, HTTP based;
+				less code generation
+
+				more for public API: 
+
+				use a version number in the URL/ HTTP accept header
+
+
+
+
+			SOAP: XML-based, WSDL (API of SOAP) enables code generation;
+				client can use loal classes and method calls --> useful in statically typed programming languages;
+
+				rely on tool support, code generation, 
+
+			 good for experimentation and debugging
+
+			 
+
+
+
+		
+
+		RPC: make a request to a remove network service == calling a local dunction (location transparency)
+				however: local function is predictable; network request may timeout; retry will cause duplication; latency; 
+
+				RPC built on top of encodings
+
+				RPC with binary encoding format can achieve better performance
+
+				for within the same datacenter
+
+				backword/forward compatibilty properties of RPS inherited from encoding: 
+				backward compatibilty on requests; forward compatibility on responses;
+
+
+
+	Message-Passing Dataflow:
+		low latency;
+		message sent via message broker: message queue or message-oriented middleware;
+
+		message broker:	
+			act as a buffer;
+			redeliver message to a crashed process;
+
+			decouples the sender from recipient
+
+			message-passing is one-way (asynchronous)
+
+		1. one process sends a message to a named queue
+		2. broker ensures that the message is delivered to consumers/ subscribers
+		3. consumer itself publish to another topic/ reply (preserve unknown fields)
+
+		any encoding format
