@@ -1,0 +1,8 @@
+1. Distributed Data to support a distributed system. Properties of distributed data:
+  - Scalability - spread the loaded data across multiple machines.
+  - Fault tolerance: even if some machines are down, the others can take over.
+  - Latency: to avoid too long waiting, there are usually several machines distributed in different geographical locations.
+  
+2. Distributed shared-nothing architecture : each machine ore virtual machine running the database software is called a node. This is widely used in industry.
+
+3. Replication is used to keep data in different locations.
