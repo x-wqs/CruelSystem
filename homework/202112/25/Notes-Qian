@@ -5,4 +5,5 @@
   
 2. Distributed shared-nothing architecture : each machine ore virtual machine running the database software is called a node. This is widely used in industry.
 
-3. Replication is used to keep data in different locations.
+3. Replication is used to keep data in different locations. In master-slave mode, the leader is used to write and the followers are read-only from the
+client's point of view.
