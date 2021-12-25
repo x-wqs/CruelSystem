@@ -1,0 +1,69 @@
+Partition == sharding
+
+
+
+How to partition a large amount of data?
+
+	- WRONG WAY:
+		○ Evenly partition to ten pieces is Wrong
+	- Could cause hot spot
+		○ Maybe could randomly assign the new data to a node, but it has disadvantage
+			§ No way to know which node we should query from if we want to query the data.
+
+
+
+Partition by Range Key
+
+Pros:
+	- Range query
+	- Random query
+Cons:
+	- Need to have preknowledge
+	- Could cause hot spots.
+		○ Eg, if use user name, you don't know the number of each name, maybe the names starting with "X" letter have lots of records
+		○ If use time as key to partition, newer time usually have more possibility to be accessed
+
+Partition by Hash Key
+
+Given a string, randomly generate a hash even the input is very similar.
+
+UUID:
+	- Version 1
+		○ MAC + timestamp
+
+
+Use UUID as hash key to partition
+
+Pros:
+	- Uniform distributed
+Cons:
+	- Lose the ability to do efficient range queries
+
+Cassandra strategy:
+	- The key is a compound primary key
+		○ Part one is hashed to determine the partition
+		○ Part two is sortkeys for (primary sorting key and secondary sorting keys)
+	- Primary key = (Partition key + sort key)
+
+
+Key Skew / hot spot
+
+In some extreme case, all reads and writes are for the same key, you still end up with all requests being routed to the same partition.
+	- Celebrity post a post or comments on a celebrity's post
+		○ All the comments(write) are going to the same node, since the key is the poster's key so all the request will be routed to the same node, so that node will become a hotspot
+
+Solution:
+	- Add tow digits to the poster's key, eg, trump tweeter is 99999 and it causes a hot spot, then we add 01 to the id when comment on it -> when we comment on trump's tweet, we actually create records with key "9999901" + indexing key so that all the comment write will be routed to different nodes/
+		○ For reading, we need to do some extra work to track which all the sub ids generated from the primary ID like 99999 -> "9999901 to 9999998" 的table and read all the records and combine them. 
+
+
+
+
+Kafka throughput:
+	- 64MB/s -> 128 MB/s
+
+
+
+Local/document secondary index: 
+
+Only maintain a local secondary index, you don't need to care about other nodes.
