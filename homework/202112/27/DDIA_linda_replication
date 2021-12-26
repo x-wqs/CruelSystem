@@ -1,0 +1,68 @@
+Replication:
+	geographically close -> reduce latency
+	increase availablity.
+	increase read throughput
+
+	three algorithms to replicating chanes between nodes:
+		single-leader
+		multi-leader
+		leaderless replication
+
+	What is a leader:	one of the replicas is designated as leader (master, primary)
+						clients first send request to leader
+						leader first writes new data to local storage
+			followers: (read replicas, slaves, hot standbys):
+						leader also sneds the data change to followers repliation log/change stream
+						process writes in the same order
+
+						read from anywhere, write only to leader
+
+						synchronous: the leader waits until follower 1 has confirmed that it received the write before reporting success to the user, and before making the write visible to other clients
+
+							followers guarantee to be consistent
+
+							block all writes and wait until recover
+
+
+
+						asynchronous: the leader sends the message, but doesn’t wait for a response from the follower.
+
+						semi-sunchronous: one followers is synchronous, the others are asynchronous
+
+						set up now followers:
+							1. take a consistent snapshot of leader
+							2. copy snapshot to new follower
+							3. requtsts all changes after snapshot
+							4. caught up
+
+
+					follower failure: Catch-up recovery: keeps a log of the data changes from leader
+
+					leader failure: failover
+								1. tell it is failed by timeout
+								2. consensus to choose a new leader
+								3. reconfigure, old leader is follower
+							old leader's unreplicated writes (asynchronous) be discarded
+						
+
+	replication methods:
+		1. logs every write request (statement)
+			replace any nondeterminstic function calls -> fixed return value. 
+
+		2. Write-ahead log (WAL) shipping
+			append-only log sent to followers
+			log describes data on a very low level-> no version difference allowed
+
+		3. Logical (row-based) log replication
+			a sequence of records describing writes to database tables at the granularity of a row
+
+		4. Trigger-based replication
+			move replication up to the application layer: trigger: log change to a separate table
+	
+
+	read-scaling architecture: increase capacity by adding more followers;
+			only work with asynchronous replication: 
+			may have replication lag
+
+			issue: lost my own write on the follower
+			solution: read-after-write consistency 
