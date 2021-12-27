@@ -1,0 +1,32 @@
+	read-scaling architecture: increase capacity by adding more followers;
+			only work with asynchronous replication: 
+			may have replication lag
+
+			issue: lost my own write on the follower
+			solution: read-after-write consistency 
+				1. When reading something that the user may have modified, read it from the leader; otherwise, read it from a follower. 
+				2. for one minutes after the last update, make all reads from the leader
+				3. get timestamp 
+
+			issue: moving backword in time
+			solution: Monotonic reads
+				1. each user always maked their reads from the same replica 
+
+			issue: violation of causality
+			solution: consistent prefix reads
+
+
+	Multi-leader replication (dangerous, avoided if possible; 
+	use when need to continue offline;
+	Real-time collaborative editing ;
+	):
+		allow more than one node to accept writes.
+		between data centers: each datacenter's leader replicated its changed to the leaders in other datacenters.
+
+		increase performance: every write can be processed in the local datacenter and is replicated asynchronously to the other datacenters.
+
+		datacenter outages: single: promote a follower in another datacenter
+							multi: continue operating independently of the others,
+
+		A multi-leader configuration with asyn‐ chronous replication can usually tolerate network problems better: a temporary network interruption does not prevent writes being processed.
+
