@@ -1,0 +1,35 @@
+Rebalance partition:
+
+Scaling:
+	- Throughput increase, so need more cpu to handle load
+	- Dataset increase, so need more disk and RAM to store it
+	- A machine fails, and other machines need to take over the failed machine
+
+
+WRONG way
+Hashkey % MOD ❌
+
+比如12346 如果machine number 从9 升成了10 那么原来的123456%9 == 3 是machine 3 但是如果增加到10台机器123456%10 == 6就需要移动到 machine 6
+
+
+
+Solutions:
+Fixed number of partitions:
+	- Schemaless, Riak, elasticsearch, couchbase, voldemort
+比如说schemaless 有4096个partition
+
+
+Dynamic partition
+
+Fixed number partition is  inconvenient. 
+
+Key range-partitioned database (hbase, rethinkDB) create partition dynamically. When a partition grows exceed the configed size, it will split into two partitions.
+
+
+Service discovery
+	1. Every node knows each other nodes
+	2. Extra routing layer
+		a. 从zookeeper或者etcd （global config）
+			i. 保留从 key range -> partition -> node
+	3. Client knows which node to request
+		a. Client 是 datacenter 其他的 service
