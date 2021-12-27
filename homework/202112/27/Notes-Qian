@@ -1,0 +1,18 @@
+1. Synchronous VS Asynchronous Replication
+The leader database notifies every foller in real time or not. Sometimes, one part of followers are synchronous, the rest are asynchronous.
+The pure synchronous model may waste time because some replicas may can't respond in time due to network fault, crash, etc.
+
+2. Set up new followers
+1) take a consistant snapshot of the leader's database, backups are usually needed.
+2) copy the snapshot to the new follower node.
+3) the follower execute the data change.
+4) Make sure the follower has caught up.
+
+3. Handle node outages
+The follwer can recover from the log. By connecting to the leader, requesting all the data changes that occurred during the outage.
+
+4. Leader failure: 
+1) the leader is not alive when it doesn't respond for a period of time.
+2) promote one follower to the new leader. 
+3) the other follower are reconfigured to follow the new leader.
+Note: a mechanism should be designed to shut down one node if two leaders are detected.
