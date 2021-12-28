@@ -1,0 +1,30 @@
+		issue: write conflicts 
+			multi-leader:  conflict is only detected asynchronously later. 
+			want synchronous conflict detetion -: use single-leader replication
+
+		solution: all writes for a particular record go through the same leader
+				might go down if leader had to change;
+				resolve the conflict in a convergent way 
+				on write: 
+				on read
+
+		replication topologies: circular: id to prevent infinite replication loops
+								start: 
+								all-to-all: fault tolerance is better; 
+											causality problem;
+
+
+	Leaderless Replication:
+
+		1. client sends writed to several replicas
+		2. coordinator node does this onbehalf of the client -> no ordering of writes
+
+		when a node is down: no failover; read requests are also sent to several nodes in parallel.
+										version number to detect the latest 
+							after back online: reparir when read; background process constantly copies any missing data from one replica to another.
+							Quorums reads and writes: n nodes, w + r > n
+							
+
+
+
+
