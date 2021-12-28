@@ -1,0 +1,69 @@
+Chapter 5
+
+Replication: 
+- keeping a copy of the same data on multiple machines that are connected via a network
+- reason:
+  - latency: geographically closer to users
+  - availability: if some of its parts have failed
+  - scale for reads
+
+Three replication algos for replicating changes between nodes: 
+ - single-leader
+ - multi-leader
+ - leaderless
+
+1. Leaders and Followers
+
+	Replica: each node that stores a copy of the database
+
+	Leader-based replication (master-slave)
+	- writes are only accepted on the leader (reads are accepted by all)
+                                                               data change as part of a replication log or change stream
+	- leader (write the new data to local storage) then -------------------------------------------------------------> followers
+	- followers update local copy by applying all writes in the same order as they were precessed on the leader
+	- used in MySQL, MongoDB, Kafka, etc.
+
+	1. Synchronous v.s. Asynchronous Replication
+	   - Synchronous: the leader waits until follower 1 has confirmed that it received the write before reporting success to the user, and before making the write visible to other clients
+	                  pro: the follower is guaranteed to have an up-to-date copy of the data that is consistent with the leader
+	                  con: if the synchronous follower doesn’t respond, the write cannot be processed	       
+	   - Asynchronous: the leader sends the message, but doesn’t wait for a response from the follower
+	                  pro: the leader can continue processing writes, even if all of its followers have fallen behind
+	                  con: if the leader fails and is not recoverable, any writes that have not yet been repli‐ cated to followers are lost
+	   (Semi-synchronous: only one follower is synchronous)
+	   More other replication algos are under research.
+
+	2. Setting Up New Followers
+	   (not a simple copy)
+	   (1) Take a consistent snapshot of the leader’s database at some point in time
+	   (2) Copy the snapshot to the new follower node
+	   (3) The follower connects to the leader and requests all the data changes that have happened since the snapshot was taken
+	   (4) Processed the backlog of data changes since the snapshot
+	
+	3. Handling Node Outages
+	   to keep the system as a whole running despite individual node failures
+	   (1) Follower failure: Catch-up recovery
+	       From its log, it knows the last transaction that was processed before the fault occurred. the follower connects to the leader and request all the data changes that occurred during the time when the follower was disconnected
+	   (2) Leader failure: Failover (manually or automatically)
+	       One of the followers is promoted to be the new leader
+	       i. Determining that the leader has failed (with a timeout, if not a planned maintenance
+	       ii. Choosing a new leader (best candidate is the replica with the most up-to-date data changes from the old leader)
+	       iii. Reconfiguring the system to use the new leader (ensure old leader becomes a follower and recognizes the new leader)
+                - Failover go wrong cases:
+                  1> Under asynchronous replication, the new leader may not have received all the writes from the old leader before it failed
+                  2> split brain: two nodes both believe that they are the leader. If both leaders accept writes, and there is no process for resolving conflicts 
+                  3> timeout defination is tricky, if too short - unnecessary failovers, if too long - a longer time to recovery in the case where the leader fails
+		 - solution: manual failovers
+
+	4. Implementation of Replication Logs
+	   - Statement-based replication
+	     The leader logs every write request (statement) that it executes and sends that statement log to its followers
+	     issues: statements call nondeterministic function; use an autoincrementing column, or if they depend on the existing data in the database; have side effects.
+	   - Write-ahead log (WAL) shipping  (physical)
+	     The log is an append-only sequence of bytes containing all writes
+	     issues: the log describes the data on a very low level, which makes replication closely coupled to the storage engine. Version change/upgrades require downtime
+	   - Logical (row-based) log replication
+	     To use different log formats for replication and for the storage engine, which allows the replication log to be decoupled from the storage engine internals (it can more easily be kept backward compatible, allowing the leader and the follower to run different versions of the database software, or even different storage engines)
+	   - Trigger-based replication
+	     with features: triggers and stored procedures
+	     flexible, but more prone to bugs and limitations than the database’s built-in repli‐ cation
