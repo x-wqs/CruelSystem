@@ -1,0 +1,58 @@
+2. Problems with Replication Lag (under asynchronous replication)
+
+	In a read-scaling architecture: eventual consistency; replication lag
+	Three example problems from replication lag:
+
+	1. Reading Your Own (user's) Writes
+	   issue: A user makes a write, followed by a read from a stale replica.
+	   goal: read-after-write consistency
+	   solutions: 
+	   1> when reading something that the user may have modified, read it from the leader. (e.g. the user's profile)
+	   2> if too much is editable by the user, use a time buffer.
+	      (1>) within 1 min after the last update, read from leader always
+	      (2>) only read from followers within one minute behind the leader (replication lag)
+	   3> only read from followers with last modification later then the user write time. (need logical timestamp or actual system clock to work)
+	   Another issue case: cross-device read-after-write consistency
+	   need to additionally consider:
+	   1> centralized time among devices
+	   2> if in different data center, need first to rout requests from all of a user’s devices to the same datacenter
+
+	2. Monotonic Reads
+	   issue: A user first reads from a fresh replica, then from a stale replica. Time appears to go backward.
+	   goal: monotonic reads: user will not read older data after having previously read newer data 
+	         (eventual consistency < Monotonic reads < strong consistency)
+	   solutions: 
+	   each user always makes their reads from the same replica (the replica is chosen based on a hash of the user ID)
+
+	3. Consistent Prefix Reads (a particular problem in partitioned databases)
+	   issue: If some partitions are replicated slower than others, an observer may see the answer before they see the question.
+	   goal: consistent prefix reads: if a sequence of writes happens in a certain order, then anyone reading those writes will see them appear in the same order
+	   solutions:
+	   1> to make sure that any writes that are causally related to each other are written to the same partition
+	   2> if above is not possible, use algorithms that explicitly keep track of causal dependencies (P186)
+
+	Solutions for Replication Lag
+	transactions: a way for a database to provide stronger guarantees so that the application can be simpler
+	However, in the move to dis‐ tributed (replicated and partitioned) databases, people claim that transactions are too expensive in terms of performance and availability, and asserting that eventual consistency is inevitable in a scalable system. (See more discussion in Chapter 7, 9 & Part III)
+
+
+3. Multi-Leader Replication
+	
+	Each leader simultaneously acts as a follower to the other leaders
+	Downside: the same data may be concurrently modified in two different datacenters, and those write conflicts must be resolved
+	multi-leader replication is often considered danger‐ ous territory that should be avoided if possible...
+
+	1. Use Cases for Multi-Leader Replication
+	   (1) Multi-datacenter operation
+	       Within each datacenter, regular leader–follower replication is used; between datacenters, each datacenter’s leader replicates its changes to the leaders in other datacenters
+	       single-leader v.s. multi-leader configurations:
+	       i. Performance
+		  Avoid every write going over the internet to the datacenter with the leader. network delay is hidden from users.
+	       ii. Tolerance of datacenter outages
+		  Avoid if the datacenter with the leader fails, failover promotes a follower in another datacenter to be leader. Each datacenter can continue operating independently of the others, and replication catches up when the failed datacenter comes back online.
+	       iii. Tolerance of network problems
+		  Tolerate network problems better: a temporary network interruption (internet b/w datacenters) does not prevent writes being processed.
+	   (2) Clients with offline operation
+	       An application that needs to continue to work while it is disconnected from the internet. e.g.: calendar, every device has a local database that acts as a leader.
+	   (3) Collaborative editing
+	       Real-time collaborative editing applications allow several people to edit a document simultaneously. write changes local replica instantly, and asynchronously replicated to the server and any other users who are editing the same document. No editing conflicts requires a lock on the document before a user can edit it. (This collaboration model is equivalent to single-leader replication with transactions on the leader.) Faster collaboration requires conflict resolution.
