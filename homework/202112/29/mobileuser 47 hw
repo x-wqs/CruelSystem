@@ -1,0 +1,158 @@
+Replication
+
+Replication means keep a copy of the same data on multiple machines that are connected via network.
+
+Goal
+
+	- Keep the data geographically close to your users (reduce latency)
+	- Availability:
+		○ Allow system to continue working  even some parts are failed
+	- Increase read efficiency
+	- Scalability, could handle more data
+
+Difficulty
+	- Handling changes to the replicated data
+
+Three approach:
+	- Single leader
+	- Multi-leader
+	- Leaderless
+
+Trade-off:
+	- Use sync or async approach
+	- How to handled failed replicas
+
+Leaders and followers
+
+Leader-based replication
+	- One of the replicas is designated as leader(master), all write should append to master
+	- The other replicas are followers(slaves, hot standbys)
+		○ When the leader has new data written to it's local storage, the changes will eb sent to the followers as "replication log" or "change stream". 
+	- Read could be from master or slaves, but write must to leader or master.
+
+Leader-based replication is not restricted to only DB, messafe queue like Kafka, RabbitMQ, network filesystem are similar.
+
+Synchronous vs Asynchronous Replication
+
+Sync:
+	- Pros:
+		○ Can make sure the master and slave are consistent, even if the master is failed
+	- Cons:
+		○ High latency
+			Ø *2
+		○ Lock on write, some times due to network delay, the latency could be very high
+Usually only ensure, one slave is synced not all. (semi synchronous)
+
+Async
+	- Pros:
+		○ Low latency, master can continue processing writes, even some slaves are fallen behind.
+	- Cons
+		○ Delayed data
+
+
+Set up new followers
+
+Key points:
+
+	- Copy the data without downtime.
+
+Process:
+	- Take a consistent snapshot of the leader's DB at some point in time without locking the whole DB
+	- Copy the snapshot to the new follower node.
+	- Follower connect to the leader and request all the data changes that have happened since the snapshot was taken. This require that the snapshot's associated with an exact position in the leader's replication log.
+	- Send a signal to notify the leader that it’s caught up.
+
+
+Handling node outages
+
+
+Follower failure: catch-up recovery
+	- Failure recovery
+		○ Each follower keeps a log of the data changes received from the leader.
+		○ When recovered, request the missed data since failed.
+	- Failure failed
+		○ Set up new node
+
+
+Leader failure: failover
+	- Determining that the leader has failed.
+		○ Use timeout to determine the leader is failed.
+	- Choose a new leader.
+		○ Election process to elect a new leader and make a consensus.
+	- Reconfiguring the system to use the new leader
+
+
+    Difficulty:
+		○ Assume, there are 2000 nodes are leaders and the other 4000 are followers.  There is a network partition happens, there will be hundreds of leaders are down and need to be replaced, the time complexity is very high! Network partitiion very serious.
+		○ Async replication. If master is down but not copied to the slaves. The follower could lose data. 
+		○ If two nodes both think themselves are leader, it will split brain, this will very dangerous!  If there two write on both leader 1 and leader 2, how to solve the conflict.
+		○ Timeout selection. 
+			Ø Long timeout, means long time to recovery.
+			Ø Less timeout means could cause unnecessary failover. Nay delay on network could cause unnecessary failover.
+	
+
+
+Replication log:
+
+
+Statement based replication
+
+Leader stores every write statement and send it to followers. Followers execute the same statements to duplicate the data.
+	- Nondeterministic function will cause inaccurate data. Eg, if statements have now(), rand() function.
+	- If column has autoincrementing columns or it's depending on existing data. They must execute in exactly same order. 
+	- Statements have side effects, it will execute repeatedly.
+
+Workaround:
+	- Replace all the undeterminstic function by the fixed value. But There are so many edge cases.
+
+WAL (write ahead logging)
+
+Usually database maintaining a WAL that contains all writes to the database. Those data could be used to build a replica. 
+
+Cons:
+	- Data is in low level: which bytes were changed in which disk blocks. So the replication is coupled to the storage engine. If version changed or storage format changed, it typically causes some issue.
+
+Logical(row-based) log replication
+
+Designed for replication.
+
+It describe the data need to be written to slaves a. the granularity of a row.
+
+	- Insert row: contains all new values of all columns
+	- Deleter: unique ID to identify which row to delete. Or all old value need to be deleted if no key
+	- Update: enough data to update the row
+
+Cons:
+	- New log formats that could be decoupled from the storage engine. 
+
+
+Trigger based replication.
+
+	- Cons
+		○ High overhead.
+
+
+Replication lag/latency:
+
+If the access pattern is heavy read, we can add more followers. This is only realistic for async replication, since if choosing sync replication, any single point failure will make the whole network unavailable for writing.
+	- It could cause data latency or temporary data inconsistency. But it will eventually consistent.
+
+Reading you own writes
+
+Require user can view the data right after changing. If using read from replica it could have some issue, because the data is not synced to the followers. 
+	We need read-after-write consistency.
+	
+	- If something is recently modified, then read from leader otherwise read from follower. User should always read his own data from leader.
+	- Keep a in memory database that record the last modifed time to determine to read from leader or followers.
+	- If the replicas are distributed across multi datacenter, any request must be routed to the leader must be routed to the data center that contains the leader. 
+	
+	
+	
+	
+	
+Monotonic reads:
+
+Goal: User read should respect "time", user should not see the data moving backward in time.
+
+Solution:
+	- Same user should always read from same replica. Implementation: User ID % mod.
