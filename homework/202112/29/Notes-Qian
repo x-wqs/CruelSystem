@@ -9,4 +9,11 @@
 
 3. Multi-Leader: each node that processes a write must forward that data change to all the other nodes. In this setup, each leader 
 simultaneously acts as a follower to the other leaders.
-   
+Single datacenter usually doesn't need multi-leader, when there are multi datacenters, there could be one leader for each datacenter.
+
+
+4. Single leader VS Multiple leaders
+   1). performance: single with long latency, multi with short latency because followers can copy from the nearest leader asynchronously.
+   2). tolerance of datacenter outages: single has to promote another leader; almost no impact.
+   3). tolerance of network problems: single is sensitive to problems in inter-datacenter link because writes are mad synchronously over
+       this link; but multi can tolerate better: a temporary network interruption does not prevent writes being processed.
