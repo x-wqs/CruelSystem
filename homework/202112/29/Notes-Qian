@@ -1,0 +1,12 @@
+1. Common Problems with Replication Lag(落后)
+   - Single node model - Asyncronously- more read less write: create many followers and distribute the read requests across those followers. 
+   This will removes load from the leader and read from nearby replicas.
+   - The applications let the user wait to see what they submitted. 
+   - A good approach to solve this issue: monotonic reads is a guarantee that this kind of anomaly does not happen.
+   
+2. Solutions for Replication Lag
+   - Read-after-write. Pretending that replication is synchronous when in fact it is asynchronous. This is for single leader.
+
+3. Multi-Leader: each node that processes a write must forward that data change to all the other nodes. In this setup, each leader 
+simultaneously acts as a follower to the other leaders.
+   
