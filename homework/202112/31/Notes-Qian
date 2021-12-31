@@ -1,0 +1,13 @@
+1. Handling write conflicts Scenarios
+- Multi-leader replication causes write conflicts if different leaders want to write different content  
+  which would cause the content is not seen as the previous content so the transactions can't be successful.
+- Synchronous VS asynchronous conflict
+  Single leader wouldn't have any problem because only the leader can write.
+  But the multi-leaders can cause problems: all of them can be succussful but the conflict can only detected asynchronously.
+2. How to avoid? 
+  - Single leader: no need to fix because all data goes to the same datacenter.
+  - Multi-leader: Distribute users to a specific datacenter. But if a user's datacenter crashes, the user will be assigned to another datacenter.
+    In this situation, the conflicts may happen again, then some check are needed.
+  - Custom conflict resolution logic: most multi-dealer replication tools let you write conflict resolution logic using application code. 
+
+3. In order to keep data safe in multi-leader mode, the leaders can copy their data to each other.
