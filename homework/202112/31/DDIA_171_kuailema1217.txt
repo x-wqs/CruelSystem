@@ -1,0 +1,54 @@
+
+	2. Handling Write Conflicts
+	   (1) Synchronous versus asynchronous conflict detection
+	       1> asynchronous: both writes are successful, and when the conflict is detected, is too late to ask the user to resolve the conflict
+	       2> synchronous: wait for the write to be replicated to all replicas before telling the user that the write was successful
+	                       but: writes independently is not accepted... so, just use single-leader replication then.                          
+	   (2) Conflict avoidance
+	       requests from a particular user are always routed to the same datacenter and use the leader in that datacenter for reading and writing. So, from any one user’s point of view the configuration is essentially single-leader.
+	       But, conflict avoidance breaks down when e.g. a user has moved to a different location and is now closer to a different datacenter.
+	   (3) Converging toward a consistent state
+	       convergent: all replicas must arrive at the same final value when all changes have been replicated
+	       solutions:
+	       i. LWW (last writer wins) or highest ID wins (potential data loss)
+	       ii. highest ID replica wins (potential data loss)
+	       iii. merge the values together e.g. concatenate them alphabetically
+	       iv. Record the conflict in an explicit data structure (preserves all information), and write application code that resolves the conflict later (perhaps by prompting the user)
+	   (4) Custom conflict resolution logic
+	       most multi-leader replication tools let you write conflict resolution logic using application code (executed on write or on read)
+	       1> on write: system detects a conflict in the log of replicated changes -> calls the conflict handler (background process)
+	       2> on read: all conflicting writes are stored. Then when read, the application may prompt the user or automatically resolve the conflict, and write the result back to the database
+	       note: conflict resolution usually applies at the level of an individual row or document (not for an entire transaction)
+	       * Automatic Conflict Resolution: some data structures & algos: Conflict-free replicated datatypes, Mergeable persistent data structures, Operational transformation
+	   (5) What is a conflict? - some obvious, some implicit. (more to come in Cha7 & Cha12)
+
+	3. Multi-Leader Replication Topologies
+	   replication topology: describes the communication paths along which writes are propagated from one node to another (#leaders > 2)
+	   1> Circular topology (MySQL by default supports only a circular topology)
+	      each write is tagged with the identifiers of all the nodes it has passed through, so no infinite loop
+	   2> Star topology (can be generalized to a tree)
+	   3> All-to-all topology (most general)
+	   Circular or Star topology: one node fails influences all. The fault tolerance of a more densely connected topology (such as all-to-all) is better: allows messages to travel along different paths, avoiding a single point of failure.
+	   All-to-all: replication speed difference => some replication messages may “overtake” others. Solution: use version vectors (timestamp doesn't work, as clocks might not synced)
+	   Becareful about these issues in Multi-Leader Replication.
+
+4. Leaderless Replication (Dynamo-style)
+
+	allowing any replica to directly accept writes from clients (e.g. Cassandra, Dynamo(Amazon))
+
+	1. Writing to the Database When a Node Is Down
+	   read requests are also sent to several nodes in parallel. Version numbers are used to determine which value is newer.
+	   (1) Read repair and anti-entropy
+	       i. Read repair
+	          When read, the client finds which replica has a stale value and writes the newer value back to that replica.
+	          Works well for values that are frequently read
+	       ii. anti-entropy process
+	          In addition, background process that constantly looks for differences in the data between replicas and copies any missing data from one replica to another.
+	          does not copy writes in any particular order, so could be a significant delay before data is copied
+	   (2) Quorums for reading and writing
+	       Defination: Reads and writes that obey these r and w values: n replicas, every write is confirmed by w nodes to be considered successful, and must query at least r nodes for each read. r and w: the minimum number of votes required for the read or write to be valid
+	       n, w and r are configurable.
+	       e.g. set w = r = (n + 1) / 2 (rounded up), etc. (more examples in the book)
+	       reads and writes are always sent to all n replicas in parallel. The parameters w and r determine how many nodes we wait for.
+	       If fewer than the required w or r nodes are available, writes or reads return an error. (potential reasons in the book)
+	       * There may be more than n nodes in the cluster, but any given value is stored only on n nodes. (understand partition)
