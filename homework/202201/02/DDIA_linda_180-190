@@ -1,0 +1,27 @@
+	Leaderless Replication:
+
+		1. client sends writed to several replicas
+		2. coordinator node does this onbehalf of the client -> no ordering of writes
+
+		when a node is down: no failover; read requests are also sent to several nodes in parallel.
+										version number to detect the latest 
+							after back online: reparir when read; background process constantly copies any missing data from one replica to another.
+							
+							Quorums reads and writes: n nodes, w + r > n
+
+									reads and writes are sent to all n; we wait for w, r
+
+									limitation: w + r < n: read stale value, lower latency
+
+										w + r > n: 1. when sloppy quorum is used-> no guaranteed overlap merge the concurrent writes
+											client failed -> less than w nodes responded -> accept writed anyway (sloppy quorum), write to other nodes (other n) reachable. -> once fixed, writes sent to appropriate "home" nodes. (hinted handoff)
+
+
+										2. two writes concurrently
+											last write wins: might drop some writes 
+
+											concurrency: simply call two operations concurrent if they are both unaware of each other (TIME does not matter)
+
+												when client writes a key: include version number, merge all values
+												method: union + delete marker, LWW 
+												version number: Each replica increments its own version number 
