@@ -1,0 +1,51 @@
+	2. Limitations of Quorum Consistency
+	   quorums are not necessarily majorities—it only matters that the sets of nodes used by the read and write operations overlap in at least one node
+	   even with w + r > n, edge cases where stale values could be returned:
+	   1> when sloppy quorum is used (see 3. below)
+	   2> two writes occur concurrently (see 4. below)
+	   3> a write happens concurrently with a read 
+	   4> a write succeeded on some replicas but failed on others (overall succeeded on fewer than w replicas)
+	   5> a node carrying a new value fails, and its data is restored from a replica carrying an old value, the number of replicas storing the new value may fall below w
+	   6> unlucky with the timing
+
+	   (1) Monitoring staleness
+	       i. leader-based replication: By subtracting a follower’s current position from the leader’s current position, you can measure the amount of replication lag
+	       ii. leaderless: there is no fixed order in which writes are applied, which makes monitoring more difficult.
+
+	3. Sloppy Quorums and Hinted Handoff 
+	   - particularly useful for increasing write availability
+	   - optional in all common Dynamo implementations, e.g. Cassandra
+	   In a large cluster (>> n nodes) it’s likely that the client can only connect to some database nodes that aren’t among the n nodes on which the value usually lives (not in n nodes).
+	   Sloppy quorum: writes and reads still require w and r successful responses, but those may include nodes that are not among the designated n “home” nodes for a value. [借睡邻居家]
+	   Hinted Handoff: Once the network interruption is fixed, any writes that one node temporarily accepted on behalf of another node are sent to the appropriate “home” nodes. [回家睡]
+
+
+	   (1) Multi-datacenter operation
+	       Leaderless replication is also suitable for multi-datacenter operation: tolerate conflicting concurrent writes, network interruptions, and latency spikes.
+	       e.g. Cassandra implements its multi-datacenter support within the normal leaderless model.
+
+	4. Detecting Concurrent Writes
+	   
+	   Conflicts will occur even if strict quorums are used. Similar to multi-leader replication, although in Dynamo-style databases conflicts can also arise during read repair or hinted handoff.
+	   Problem: events may arrive in a different order at different nodes, due to variable network delays and partial failures. (no well-defined ordering)
+	   To become eventually consistent, the replicas should converge toward the same value.
+
+	   Handling conflicts solutions:
+	   (1) Last write wins (discarding concurrent writes)
+	       LWW. (the only supported conflict resolution method in Cassandra)
+	       issue: the cost of durability; may even drop writes that are not concurrent(P291)
+	       only safe way: a key is only written once and thereafter treated as immutable. (avoiding any concurrent updates to the same key) e.g. Cassandra, each write operation a unique key: UUID
+	   (2) The “happens-before” relationship and concurrency
+	       An operation A happens before another operation B if B knows about A, or depends on A, or builds upon A in some way.
+	       Define concurrent: neither happens before the other. (exact time doesn’t matter)
+	       e.g. not concurrent: in 5.9, is causally dependent on A (e.g. B = A + 1)
+	       e.g. concurrent: no causal dependency between the operations (don't know each other)
+	   (3) Capturing the happens-before relationship
+	       e.g. 5-13. Editting a shopping cart. (refer to the book, notes there)
+	       the server can determine whether two operations are concurrent by looking at the version numbers (it does not need to interpret the value(any data structure) itself)
+	   (4) Merging concurrently written values (sibilings)
+	       If several operations happen concurrently, clients have to clean up afterward by merging the concurrently written values.
+	       e.g. CRDT (data structure) that can automatically merge siblings in sensible ways, including preserving deletions.
+	   (5) Version vectors
+	       Defination: the collection of version numbers from all the replicas.
+	       The version vector allows the database to distinguish between overwrites and concurrent writes.
