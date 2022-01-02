@@ -1,0 +1,77 @@
+Leader-based replication has one downside:
+	- All writes must go through the only leader.
+
+Multi-leader replication is usually used in multiple data center. Each data center, there is a leader. 
+	- Within each datacenter, regular leader-follower replication is used;
+	- Between each data-center, the leader replicates it changes to the leaders in other data centers.
+
+
+Pros:
+	- Performance
+		○ Request could be routed to the nearest(local) data center
+	- Tolerance of data center outages.
+		○ Since every datacenter has a whole copy of data with one leader, so even data center outage happens, the leader in another datacenter could take over the request.
+		○ For single-leader replication, it need to elect new leader from followers in different data center.
+	- Tolerance of network problems
+		○ Temporary network interruption doesn't prevent writes being processed.
+
+Key problem:
+
+	- Conflict solving.
+
+
+Multi leader replication conflicts
+
+When multi users edit same fields from different leaders, when they try to merge or replicate with other leaders, conflicts will happen.
+
+
+Sync vs async conflict detection
+	- Single leader each write on specific row is sequential, so it's synced
+	- Multi leaders are asynced.
+
+Conflict avoidance:
+If the application ensure that all the write towards specific record always go to same data center, then conflict will never happen. 
+	-  Eg, whenever one user try to edit it's data, it always routed to a specific data center.
+	- 如果跟transaction相关的，需要将所有request to specifc data center 对于特定的用户。
+
+Converging toward a consistent state （收敛到consistent 状态）
+	- Last write win (有data loss because time drift）
+	- CRDT
+
+Custom conflict resolution logic
+
+Most of time, conflict resolution is depending on the application.
+
+	- Solve on write
+		○ Define a function to customize the logic to resolve conflicts
+			§ MYSQL RDB
+	- Solve on read
+		○ Write all the conflicts data to DB, when next time query, let user to choose which one is the correct/
+
+Auto conflict resolving
+	- CRDT
+	- Mergeable persistent data structures
+	- Operational transformation
+
+
+
+Multi-leader Replication topologies
+
+
+Replication topology describes the commnuication paths along which write propagated from one node to another. 
+	- Circular topology
+		○ MySQL
+	- Star topology
+	- All to all topology
+		○ Each leader send data to all other leaders
+
+
+Circular topology/ star topology
+	- Any single failure could interrup the flow of the replication between other nodes.
+	- Each replication log need to be tagged with all the identifier of all the node has been passed.
+
+All to all topology
+	- Could violate causality sequence.
+
+
+Leaderless replication:
