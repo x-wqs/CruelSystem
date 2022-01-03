@@ -1,0 +1,44 @@
+Leaderless replication:
+Reason for choosing leaderless replication:
+	- Increase availability. Always ensure one replica available anytime. If using leader based replication, new leader election will take some time (>= 200ms)
+
+Dynamo, Riak, Cassandra, and Voldemort are leaderless replication models
+
+  Write
+	- When write comes, all the writes will apply to all replicas.
+	- Some node's data could be stale 
+		○ For example, there are three nodes, when try to write to the 3rd replica, the node is down, write to the 3rd doesn't succeed.
+		○ Solution is when reading from the DB, read requests are sent to several nodes in parallel. Version numbers are used to determine which value is newer.
+
+
+Fix conflict and avoid stale data
+
+Read repair
+	- Read all the data from different noes in parallel, and see which copies are new and which copies are stale then update the stale data to the new data.
+
+Anti entropy process
+	- Some DB has background process that constantly looks for stale data among replicas and copies missing data from one to another.
+	- Delay
+
+Quorums for reading and writing
+	- There are total n nodes
+	- In order to ensure that write is successful, we need to ensure it's written to multiple nodes of the replica. We say it's w nodes.
+	- In order to ensure we read the newest data, we need ensure that we read more than n - w nodes, since this ensure there is at least one newest copy
+
+Sloppy quorums
+If there are not enough nodes(network interruption) for write quorums number, other nodes will be write to other nodes, when network is fixed, the temporarily data will be sent back to corresponding nodes.  （hinted handoff)
+Goal:
+	- Increase availability, as long as any w nodes are available, the DB will accept writes.
+Cons:
+	- It will cause stale data, when network recovered, user request data from not synced ndoes and read the stale data.
+
+Monitor stalenss: 
+	- For leader-based replication: 
+		○ Monitor replication lags.
+	
+Concurrent writes
+	- Principle: If there are concurrent write, the goal is to converge to the eventual consistency.
+
+Solution: 
+	- (Last Write Win) use one mechanism to choose one to overwrite others(Eg, last write win).
+		○ Cons: clock drift
