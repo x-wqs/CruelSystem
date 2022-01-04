@@ -1,0 +1,34 @@
+5. Summary
+
+	Replication serves several purposes:
+	(1) High availability
+	(2) Disconnected operation
+	(3) Latency
+	(4) Scalability
+
+	- issues like: unavailable nodes and network interruptions
+
+	Three main approaches to replication:
+	(1) Single-leader replication (no conflict resolution to worry about)
+	(2) Multi-leader replication (more robust, but weak consistency guarantees) (concurrency issues)
+	(3) Multi-leader replication (more robust, but weak consistency guarantees) (concurrency issues)
+
+	Synchronous v.s. asynchronous replication:
+	- asynchronous replication (if replication lag increases and servers fail, failover may has data loss)
+
+	Some consistency models: (helpful for deciding how an application should behave under replication lag)
+	(1) Read-after-write consistency
+	(2) Monotonic reads
+	(3) Consistent prefix reads
+
+Chapter 6 Partitioning (sharding)
+
+Main reason: scalability
+A large dataset can be distributed across many disks, and the query load can be distributed across many processors.
+[Each Partition doesn't know about the other ones' exist.] Complex queries can potentially be parallelized across many nodes
+	
+1. Partitioning and Replication 
+	Each record belongs to exactly one partition, it may still be stored on several different nodes (replecations) for fault tolerance. A node may store more than one partition.
+	Each node may be the leader for some partitions and a follower for other partitions.
+	see Figure 6-1
+	The choice of partitioning scheme is mostly independent of the choice of replication scheme.
