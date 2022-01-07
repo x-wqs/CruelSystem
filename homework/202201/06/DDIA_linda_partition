@@ -1,0 +1,39 @@
+	Partitioning == sharding 
+		hot spot: A partition with disproportionately high load
+
+		partitioning by: 
+
+			key:
+
+			key range (partition boundaries need to adapt to the data)
+				Within each partition, we can keep keys in sorted order
+
+			hash of key:
+				assign each partition a range of hashes
+				distributing keys fairly among the partitions
+				may use consistent hashing
+				any range query has to be sent to all partitions
+				hash on the first key, index on others
+
+				if skew: responsibility of the application to reduce, may need to split key
+
+
+			secondary index:
+				document-based partitioning:
+					local index : each partition maintains its own secondary indexes, covering only the documents in that partition
+
+					search for all partition -> scatter/gather -> expensive
+
+				term-based partitioning:
+					global index : covers data in all partitions;
+					A global index must also be partitioned, 
+
+					make reads more efficient
+
+					asynchronous
+
+	rebalancing:
+		1. fixed number of partitions -> # partitions >> # nodes 
+			usually fixed when the database is first set up and not changed afterward
+
+		2. Dynamic partitioning
