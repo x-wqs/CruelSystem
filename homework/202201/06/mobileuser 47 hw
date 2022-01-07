@@ -1,0 +1,63 @@
+Partition == sharding
+A partition is a division of a logical database or its constituent elements into distinct independent parts.
+
+How to partition.
+	- Key range partition
+	- Hash Partition
+Secondary index.
+Rebalancing.
+Request routing.
+
+How to partition a large amount of data?
+
+	- WRONG WAY:
+		○ Evenly partition to ten pieces is Wrong
+		○ 原因是你这样并不能保证partition是fair的
+		○ Could cause hot spot
+			§ Maybe could randomly assign the new data to a node, but it has disadvantage
+				□ No way to know which node we should query from if we want to query the data.
+
+
+
+Partition by Range Key
+
+Key Range partition usually use fixed number partition
+
+Pros:
+	- Range query
+	- Random query
+Cons:
+	- Need to have preknowledge
+	- Could cause hot spots.
+		○ Eg, if use user name, you don't know the number of each name, maybe the names starting with "X" letter have lots of records
+		○ If use time as key to partition, newer time usually have more possibility to be accessed
+
+Partition by Hash Key
+
+Usually use dynamic partition.
+
+Given a string, randomly generate a hash even the input is very similar.
+
+UUID:
+	- Version 1
+		○ MAC + timestamp
+
+
+Use UUID as hash key to partition
+
+Pros:
+	- Uniform distributed
+Cons:
+	- Lose the ability to do efficient range queries
+		○ 因为如果要查range的话要到不同的node去查找. 对于Mango 如果是range query，任何范围查询必须发送到所有分区。 Riak, Couchbase, Voldemort 不支持主键上的范围查询。
+		○ 如果是用户的id做主键的话 一般情况下不会对主键进行range query。如果对于comment这种来说，相同用户下的comment需要按照时间顺序排序的话，我们可以按照下边这种解决方案。
+
+Cassandra strategy:
+	- The key is a compound primary key
+		○ Part one is hashed to determine the partition
+			§ Same key the hash would be same
+		○ Part two is sortkeys for (primary sorting key and secondary sorting keys)
+	- Primary key = (Partition key + sort key)
+
+
+Key Skew(偏斜) / hot spot
