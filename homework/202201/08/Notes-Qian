@@ -1,0 +1,7 @@
+How to partition?
+1. Fixed number of partitions: this is to grab a partition from the previous nodes and assign to the new node.
+2. Dynamicc partitioning: When a partition grows to exceed a configured size, it is split into two partitions so that approximately half
+of the data ends up on each side of the split. This approach can make good use of the space.
+It needs human to manually rebalancing the cluster.
+3.After rebalancing, several ways can be used to deal with requests: 1. load balancer; 2. client talks with the a routing tier first and go to the
+right node; 3. the client is aware of the correct node and visits it directly.
