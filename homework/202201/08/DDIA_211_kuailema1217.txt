@@ -1,0 +1,46 @@
+	1. Strategies for Rebalancing
+	   (1) How not to do it: hash mod N
+	       issue: if the number of nodes N changes, most of the keys will need to be moved from one node to another
+	   (2) Fixed number of partitions -- #partitions is independent of #nodes
+	       create many more partitions than there are nodes, and assign several partitions to each node. If a node is added to the cluster, the new node can steal a few partitions from every existing node until partitions are fairly distributed once again. If a node is removed from the cluster, the same happens in reverse. (the old assignment of partitions is used for any reads and writes that happen while the trans‐ fer is in progress.) e.g. Elasticsearch
+	       issue: Choosing the right number of partitions is difficult if the total size of the dataset is highly variable
+	              Too large partitions: rebalancing and recovery from node failures become expensive. 
+	              Too small partitions: they incur too much overhead.
+	   (3) Dynamic partitioning
+	       key range–partitioned databases (e.g. HBase) create partitions dynamically (split into two <-> shrink and merge to one)
+	       After split, one of its two halves can be transferred to another node in order to balance the load.
+	       adv: the number of partitions adapts to the total data volume.
+	       disadv: to avoid all empty partitions start in the same node, allow an initial set of partitions to be configured on an empty database. (e.g. HBase, MongoDB)
+	       Could also be used with hash-partitioned data.
+	       the number of partitions is proportional to the size of the dataset. (each partition size is relatively fixed), so #partitions is independent of #nodes either.
+	   (4) Partitioning proportionally to nodes
+	       In e.g. Cassandra, the number of partitions is proportional to the number of nodes. (the size of each partition grows proportionally to the dataset size while the number of nodes remains unchanged, but when you #nodes increases, the partitions become smaller again) Since a larger data volume generally requires a larger number of nodes to store, this approach also keeps the size of each partition fairly stable.
+	       When a new node joins the cluster, it randomly chooses a fixed number of existing partitions to split, and then takes ownership of one half of each of those split partitions.
+	       Picking partition boundaries randomly requires that hash-based partitioning is used.
+
+	2. Operations: Automatic or Manual Rebalancing (move partitions b/w nodes)
+	   [Rebalancing is expensive operation. It requires rerouting requests & moving data. network is expensive. Node performance could also be influenced]
+	   1> Automatic: convenient but unpredicatable. (dangerous in combination with automatic failure detection)
+	   2> Manual: slower, but help prevent operational surprises
+
+5. Request Routing
+
+	how does client know which node to connect to? (service discovery: any piece of software that is accessible over a network has this problem)
+	Three ways: (Fig 6-7)
+	1> each node knows which node the partitions are in. Allow clients to contact any node to find it out.
+	2> a routing tier b/w client and nodes, and it knows where the partitions are. (like a partition-aware load balancer)
+	3> client knows where the partitions are. [it must be an internal client]
+	But, how does the component making the routing decision learn about changes in the assignment of partitions to nodes?
+	1> a separate coordination service such as ZooKeeper to keep track of this cluster metadata. And it notifies the component. (e.g. Kafka)
+	2> gossip protocol among the nodes to disseminate any changes in cluster state. (e.g. Cassandra)
+
+	- Parallel Query Execution
+	massively parallel processing (MPP): The MPP query optimizer breaks this complex query into a num‐ ber of execution stages and partitions, many of which can be executed in parallel on different nodes of the database cluster
+
+6. Summary (of partitioning)
+
+	Goal: to spread the data and query load evenly across multiple machines, avoiding hot spots.
+	Approaches: Key range partitioning (dynamic rebalancing); Hash partitioning (fixed #partitions, or dynamic rebalancing); hybrid.
+	Secondary index methods: local indexes (easy write, hard read); global indexes (hard write, easy read)
+	Techniques for routing queries
+	every partition operates mostly independently
