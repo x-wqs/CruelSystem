@@ -1,0 +1,15 @@
+	rebalancing:
+		1. fixed number of partitions -> # partitions >> # nodes 
+			usually fixed when the database is first set up and not changed afterward
+
+		2. Dynamic partitioning
+			one partition one node. one node multiple partitions
+			number of partitions adapts to the total data volume
+			start with a single partition -> initial set of partitions to be configured. 
+
+			1. partitions proportional to dataset size
+			2. size of partition -> dataset size
+			3. number of partitions -> number of nodes : fixed number of partitions per node
+
+		
+
