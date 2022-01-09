@@ -1,0 +1,56 @@
+Rebalance partition:
+
+Two reason need to rebalacing:
+Scaling:
+	- Throughput increase, so need more cpu to handle load
+	- Dataset increase, so need more disk and RAM to store it
+A machine fails
+	-  other machines need to take over the failed machine
+
+
+WRONG way
+Hashkey % MOD ❌
+
+It will cause moving most of data. 
+	- 假设最初有十个节点，有一个hashkey 9999%10 == 9 它在第九台节点，但是如果增加一台节点变成11台机器，那么它需要移动到第0台机器。
+	- 原则是每次只移动必须的数据，避免不必要的移动。
+
+
+
+Solutions:
+Fixed number of partitions:
+	- Schemaless, Riak, elasticsearch, couchbase, voldemort
+比如说schemaless 有4096个partition
+
+
+从一开始就创建非常多的分区（分区数量>>node数量）
+Node 的数量是可以变的，但是partitions的数量是fixed。比如说原本有4个nodes，所以每个nodes有1024个partition，当notes增加的时候，我们只需要从每个node 拿出一些partition 移动到新的node。
+
+
+Dynamic partition
+
+Fixed number partition is  inconvenient. 
+
+Key range-partitioned database (hbase, rethinkDB) create partition dynamically. When a partition grows exceed the configed size, it will split into two partitions, if the partitions is smaller than the threshold, it will merged with the one beside.
+
+Petitioning proportionally to nodes
+	- With dynamic partition, the number of partitions is proportional to the size of the dataset.
+	- With a fixed number of partitions, the size of each partition is proportional to the size of dataset.
+	- Cassandra and ketama using this approach.
+		○ The size of each partition grows proportionally to the datset size while the number of the node unchanged, but when more nodes are added, the partitions becomes smaller again.
+
+
+Service discovery
+	1. Every node knows each other nodes （used gossip protocol)
+		a. Cassandra dynamo 
+		b. Client connect to any node(via round-robin load balancer).
+		c. If the node owns the data, just handle directly
+		d. If not owning the data, forward to the appropriate node., receives the replay and pass it back to client.
+	2. Extra routing layer
+		a. 从zookeeper或者etcd （global config）
+			i. 保留从 key range -> partition -> node -> IP
+			ii. Zookeeper 是source of truth.
+	3. Client knows which node to request
+		a. Client 是 datacenter 其他的 service
+		b. Latency 是第二种方法的1/2 因为一个request就能拿到资源。
+		c. Client 需要不停地进行update
